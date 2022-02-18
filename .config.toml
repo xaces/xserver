@@ -1,0 +1,15 @@
+### 公网ip
+Host= "127.0.0.1"
+
+###
+[Http]
+  Port= 8080
+  Timeout= 20
+  Root= "xserver"
+  View= "../Pear-Admin-Layui"
+  
+[Sql]
+  # name: "mysql"
+  # address: "root:123456@tcp(172.16.50.219:3306)/xserver?charset=utf8&parseTime=True&loc=Local"
+  Name= "sqlite"
+  Address= "xserver.db"
