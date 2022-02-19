@@ -28,23 +28,23 @@ func (o *Menu) ListHandler(c *gin.Context) {
 
 // GetHandler 查询菜单详细
 func (o *Menu) GetHandler(c *gin.Context) {
-	id, _ := ctx.ParamInt(c, "id")
-	var menu model.SysMenu
-	if err := orm.DbFirstById(&menu, id); err != nil {
+	getId, _ := ctx.ParamInt(c, "id")
+	var data model.SysMenu
+	if err := orm.DbFirstById(&data, getId); err != nil {
 		ctx.JSONWriteError(err, c)
 		return
 	}
-	ctx.JSONOk().WriteData(menu, c)
+	ctx.JSONOk().WriteData(data, c)
 }
 
 // AddHandler 新增
 func (o *Menu) AddHandler(c *gin.Context) {
-	var menu model.SysMenu
-	if err := c.ShouldBind(&menu); err != nil {
+	var data model.SysMenu
+	if err := c.ShouldBind(&data); err != nil {
 		ctx.JSONWriteError(err, c)
 		return
 	}
-	if err := orm.DbCreate(&menu); err != nil {
+	if err := orm.DbCreate(&data); err != nil {
 		ctx.JSONWriteError(err, c)
 		return
 	}
@@ -53,12 +53,12 @@ func (o *Menu) AddHandler(c *gin.Context) {
 
 // UpdateHandler 修改
 func (o *Menu) UpdateHandler(c *gin.Context) {
-	var menu model.SysMenu
-	if err := c.ShouldBind(&menu); err != nil {
+	var data model.SysMenu
+	if err := c.ShouldBind(&data); err != nil {
 		ctx.JSONWriteError(err, c)
 		return
 	}
-	if err := orm.DbUpdateModel(&menu); err != nil {
+	if err := orm.DbUpdateModel(&data); err != nil {
 		ctx.JSONWriteError(err, c)
 		return
 	}

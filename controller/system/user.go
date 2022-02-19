@@ -34,24 +34,24 @@ func (o *User) PageHandler(c *gin.Context) {
 	if tok.UserName != model.SysUserName {
 		where.String("created_by like ?", tok.UserName) // 非管理员用户只能查看自己创建的用户
 	}
-	var users []model.SysUser
-	totalCount, _ := orm.DbPage(&model.SysUser{}, where).Find(param.Page, param.Limit, &users)
-	ctx.JSONOk().Write(gin.H{"data": users, "count": totalCount}, c)
+	var data []model.SysUser
+	totalCount, _ := orm.DbPage(&model.SysUser{}, where).Find(param.Page, param.Limit, &data)
+	ctx.JSONOk().Write(gin.H{"data": data, "count": totalCount}, c)
 }
 
 // GetHandler 查询详细
 func (o *User) GetHandler(c *gin.Context) {
-	userId, err := ctx.ParamInt(c, "id")
+	getId, err := ctx.ParamInt(c, "id")
 	if err != nil {
 		ctx.JSONWriteError(err, c)
 		return
 	}
-	var user model.SysUser
-	if err := orm.DbFirstById(&user, userId); err != nil {
+	var data model.SysUser
+	if err := orm.DbFirstById(&data, getId); err != nil {
 		ctx.JSONWriteError(err, c)
 		return
 	}
-	ctx.JSONOk().WriteData(&user, c)
+	ctx.JSONOk().WriteData(&data, c)
 }
 
 // GetRolesHandler
@@ -67,19 +67,19 @@ func (o *User) GetRolesHandler(c *gin.Context) {
 
 // AddHandler 新增用户
 func (o *User) AddHandler(c *gin.Context) {
-	var user model.SysUser
+	var data model.SysUser
 	//获取参数
-	if err := c.ShouldBind(&user); err != nil {
+	if err := c.ShouldBind(&data); err != nil {
 		ctx.JSONWriteError(err, c)
 		return
 	}
-	if err := service.CheckAddUser(&user); err == nil {
+	if err := service.CheckAddUser(&data); err == nil {
 		ctx.JSONWriteError(errors.New("user already exists"), c)
 		return
 	}
-	user.CreatedBy = middleware.GetUserToken(c).UserName
-	user.Password = service.NewSysPassword(&user, defaultpwd)
-	if err := orm.DbCreate(&user); err != nil {
+	data.CreatedBy = middleware.GetUserToken(c).UserName
+	data.Password = service.NewSysPassword(&data, defaultpwd)
+	if err := orm.DbCreate(&data); err != nil {
 		ctx.JSONWriteError(err, c)
 		return
 	}
@@ -88,12 +88,12 @@ func (o *User) AddHandler(c *gin.Context) {
 
 // EnableHandler 改变状态
 func (o *User) EnableHandler(c *gin.Context) {
-	var user model.SysUser
-	if err := c.ShouldBind(&user); err != nil {
+	var data model.SysUser
+	if err := c.ShouldBind(&data); err != nil {
 		ctx.JSONWriteError(err, c)
 		return
 	}
-	if err := orm.DbUpdateColById(&user, user.Id, "enable", user.Enable); err != nil {
+	if err := orm.DbUpdateColById(&data, data.Id, "enable", data.Enable); err != nil {
 		ctx.JSONWriteError(err, c)
 		return
 	}
@@ -120,12 +120,12 @@ type updatePwd struct {
 // ProfileHandler profile
 func (o *User) ProfileHandler(c *gin.Context) {
 	tok := middleware.GetUserToken(c)
-	var user model.SysUser
-	if err := orm.DbFirstById(&user, tok.UserId); err != nil {
+	var data model.SysUser
+	if err := orm.DbFirstById(&data, tok.UserId); err != nil {
 		ctx.JSONWriteError(err, c)
 		return
 	}
-	ctx.JSONOk().WriteData(user, c)
+	ctx.JSONOk().WriteData(data, c)
 }
 
 // UpdatePwdHandler 重置密码
@@ -136,18 +136,18 @@ func (o *User) UpdatePwdHandler(c *gin.Context) {
 		return
 	}
 	tok := middleware.GetUserToken(c)
-	var user model.SysUser
-	if err := orm.DbFirstById(&user, tok.UserId); err != nil {
+	var data model.SysUser
+	if err := orm.DbFirstById(&data, tok.UserId); err != nil {
 		ctx.JSONWriteError(err, c)
 		return
 	}
-	oldPassword := service.NewSysPassword(&user, param.OldPassword)
-	if oldPassword != user.Password {
+	oldPassword := service.NewSysPassword(&data, param.OldPassword)
+	if oldPassword != data.Password {
 		ctx.JSONWriteError(errors.New("old password error"), c)
 		return
 	}
-	newPassword := service.NewSysPassword(&user, param.NewPassword)
-	if err := orm.DbUpdateColById(&user, user.Id, "password", newPassword); err != nil {
+	newPassword := service.NewSysPassword(&data, param.NewPassword)
+	if err := orm.DbUpdateColById(&data, data.Id, "password", newPassword); err != nil {
 		ctx.JSONWriteError(err, c)
 		return
 	}
@@ -185,15 +185,15 @@ func (o *User) ProfileAuatarHandler(c *gin.Context) {
 
 // UpdateHandler 修改
 func (o *User) UpdateHandler(c *gin.Context) {
-	var user model.SysUser
-	if err := c.ShouldBind(&user); err != nil {
+	var data model.SysUser
+	if err := c.ShouldBind(&data); err != nil {
 		ctx.JSONWriteError(err, c)
 		return
 	}
-	if user.UserName == model.SysUserName {
-		user.RoleId = model.SysUserRoleId
+	if data.UserName == model.SysUserName {
+		data.RoleId = model.SysUserRoleId
 	}
-	if err := orm.DbUpdateModel(user); err != nil {
+	if err := orm.DbUpdateModel(data); err != nil {
 		ctx.JSONWriteError(err, c)
 		return
 	}
@@ -202,18 +202,18 @@ func (o *User) UpdateHandler(c *gin.Context) {
 
 // ResetPwdHandler 修改密码
 func (o *User) ResetPwdHandler(c *gin.Context) {
-	userId, err := ctx.ParamInt(c, "id")
+	getId, err := ctx.ParamInt(c, "id")
 	if err != nil {
 		ctx.JSONWriteError(err, c)
 		return
 	}
-	var user model.SysUser
-	if err := orm.DbFirstById(&user, userId); err != nil {
+	var data model.SysUser
+	if err := orm.DbFirstById(&data, getId); err != nil {
 		ctx.JSONWriteError(err, c)
 		return
 	}
-	newPassword := service.NewSysPassword(&user, defaultpwd)
-	if err := orm.DbUpdateColById(&user, userId, "password", newPassword); err != nil {
+	newPassword := service.NewSysPassword(&data, defaultpwd)
+	if err := orm.DbUpdateColById(&data, getId, "password", newPassword); err != nil {
 		ctx.JSONWriteError(err, c)
 		return
 	}

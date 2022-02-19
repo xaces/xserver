@@ -45,30 +45,30 @@ func (o *Dict) ListExcludeHandler(c *gin.Context) {
 
 // GetHandler 查询字典详细
 func (o *Dict) GetHandler(c *gin.Context) {
-	dictId, err := ctx.ParamInt(c, "id")
+	getId, err := ctx.ParamInt(c, "id")
 	if err != nil {
 		ctx.JSONWriteError(err, c)
 		return
 	}
-	var dictData model.SysDictData
-	err = orm.DbFirstById(&dictData, dictId)
+	var data model.SysDictData
+	err = orm.DbFirstById(&data, getId)
 	if err != nil {
 		ctx.JSONWriteError(err, c)
 		return
 	}
-	ctx.JSONOk().WriteData(dictData, c)
+	ctx.JSONOk().WriteData(data, c)
 }
 
 // DictTypeHandler 根据字典类型查询字典数据信息
 func (o *Dict) DictTypeHandler(c *gin.Context) {
 	dtype := ctx.ParamString(c, "id")
-	var dicts []model.SysDictData
-	_, err := orm.DbFindBy(&dicts, "dict_type like ?", dtype)
+	var data []model.SysDictData
+	_, err := orm.DbFindBy(&data, "dict_type like ?", dtype)
 	if err != nil {
 		ctx.JSONWriteError(err, c)
 		return
 	}
-	ctx.JSONOk().WriteData(dicts, c)
+	ctx.JSONOk().WriteData(data, c)
 }
 
 // RoleDeptTreeselectHandler 根据角色ID查询字典树结构
@@ -78,13 +78,13 @@ func (o *Dict) RoleDeptTreeselectHandler(c *gin.Context) {
 
 // AddHandler 新增字典
 func (o *Dict) AddHandler(c *gin.Context) {
-	var dict model.SysDictData
+	var data model.SysDictData
 	//获取参数
-	if err := c.ShouldBind(&dict.SysDictDataOpt); err != nil {
+	if err := c.ShouldBind(&data.SysDictDataOpt); err != nil {
 		ctx.JSONWriteError(err, c)
 		return
 	}
-	if err := orm.DbCreate(&dict); err != nil {
+	if err := orm.DbCreate(&data); err != nil {
 		ctx.JSONWriteError(err, c)
 		return
 	}
@@ -93,13 +93,13 @@ func (o *Dict) AddHandler(c *gin.Context) {
 
 // UpdateHandler 修改字典
 func (o *Dict) UpdateHandler(c *gin.Context) {
-	var dict model.SysDictData
+	var data model.SysDictData
 	//获取参数
-	if err := c.ShouldBind(&dict.SysDictDataOpt); err != nil {
+	if err := c.ShouldBind(&data.SysDictDataOpt); err != nil {
 		ctx.JSONWriteError(err, c)
 		return
 	}
-	if err := orm.DbUpdateModel(&dict); err != nil {
+	if err := orm.DbUpdateModel(&data); err != nil {
 		ctx.JSONWriteError(err, c)
 		return
 	}

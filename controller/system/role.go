@@ -28,9 +28,9 @@ func (o *Role) PageHandler(c *gin.Context) {
 	if tok.RoleId != model.SysUserRoleId {
 		where.Append("created_by like ?", tok.UserName) // 非管理员只能获取当前用户创建的的角色
 	}
-	var roles []model.SysRole
-	totalCount, _ := orm.DbPage(&model.SysRole{}, where).Find(param.PageNum, param.PageSize, &roles)
-	ctx.JSONOk().Write(gin.H{"count": totalCount, "data": roles}, c)
+	var data []model.SysRole
+	totalCount, _ := orm.DbPage(&model.SysRole{}, where).Find(param.PageNum, param.PageSize, &data)
+	ctx.JSONOk().Write(gin.H{"count": totalCount, "data": data}, c)
 }
 
 // GetHandler 查询
@@ -50,13 +50,13 @@ func (o *Role) GetHandler(c *gin.Context) {
 
 // GetRolePowerHandler 查询
 func (o *Role) GetRolePowerHandler(c *gin.Context) {
-	roleId, err := ctx.QueryUInt64(c, "roleId")
+	getId, err := ctx.QueryUInt64(c, "roleId")
 	if err != nil {
 		ctx.JSONWriteError(err, c)
 		return
 	}
-	var role model.SysRole
-	if err := orm.DbFirstById(&role, roleId); err != nil {
+	var data model.SysRole
+	if err := orm.DbFirstById(&data, getId); err != nil {
 		ctx.JSONWriteError(err, c)
 		return
 	}
@@ -73,18 +73,18 @@ func (o *Role) GetRolePowerHandler(c *gin.Context) {
 		orm.DbFind(&menus)
 	}
 	// roles 查询用户权限 menus当前登录用户全面
-	ctx.JSONOk().WriteData(gin.H{"menuIds": role.MenuIds, "menus": menus}, c)
+	ctx.JSONOk().WriteData(gin.H{"menuIds": data.MenuIds, "menus": menus}, c)
 }
 
 // AddHandler 新增
 func (o *Role) AddHandler(c *gin.Context) {
-	var role model.SysRole
+	var data model.SysRole
 	//获取参数
-	if err := c.ShouldBind(&role); err != nil {
+	if err := c.ShouldBind(&data); err != nil {
 		ctx.JSONWriteError(err, c)
 		return
 	}
-	if err := orm.DbCreate(&role); err != nil {
+	if err := orm.DbCreate(&data); err != nil {
 		ctx.JSONWriteError(err, c)
 		return
 	}
@@ -93,13 +93,13 @@ func (o *Role) AddHandler(c *gin.Context) {
 
 // UpdateHandler 修改
 func (o *Role) UpdateHandler(c *gin.Context) {
-	var role model.SysRole
-	if err := c.ShouldBind(&role); err != nil {
+	var data model.SysRole
+	if err := c.ShouldBind(&data); err != nil {
 		ctx.JSONWriteError(err, c)
 		return
 	}
 	// 更新数据
-	if err := orm.DbUpdateById(role, role.Id); err != nil {
+	if err := orm.DbUpdateById(data, data.Id); err != nil {
 		ctx.JSONWriteError(err, c)
 		return
 	}
@@ -108,13 +108,13 @@ func (o *Role) UpdateHandler(c *gin.Context) {
 
 // EnableHandler 改变状态
 func (o *Role) EnableHandler(c *gin.Context) {
-	var role model.SysRole
+	var data model.SysRole
 	//获取参数
-	if err := c.ShouldBind(&role); err != nil {
+	if err := c.ShouldBind(&data); err != nil {
 		ctx.JSONWriteError(err, c)
 		return
 	}
-	if err := orm.DbUpdateColById(model.SysRole{}, role.Id, "enable", role.Enable); err != nil {
+	if err := orm.DbUpdateColById(model.SysRole{}, data.Id, "enable", data.Enable); err != nil {
 		ctx.JSONWriteError(err, c)
 		return
 	}

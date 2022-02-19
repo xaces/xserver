@@ -42,18 +42,18 @@ func (o *Dept) ListExcludeHandler(c *gin.Context) {
 
 // GetHandler 查询部门详细
 func (o *Dept) GetHandler(c *gin.Context) {
-	deptId, err := ctx.ParamInt(c, "id")
+	getId, err := ctx.ParamInt(c, "id")
 	if err != nil {
 		ctx.JSONWriteError(err, c)
 		return
 	}
-	var dept model.SysDept
-	err = orm.DbFirstById(&dept, deptId)
+	var data model.SysDept
+	err = orm.DbFirstById(&data, getId)
 	if err != nil {
 		ctx.JSONWriteError(err, c)
 		return
 	}
-	ctx.JSONOk().WriteData(dept, c)
+	ctx.JSONOk().WriteData(data, c)
 }
 
 // TreeselectHandler 查询下拉树结构
@@ -71,8 +71,8 @@ func (o *Dept) RoleDeptTreeselectHandler(c *gin.Context) {
 }
 
 func checkAddDept(req *model.SysDept) error {
-	var dept model.SysDept
-	if err := orm.DbFirstBy(&dept, "dept_name like ?", req.DeptName); err != nil {
+	var data model.SysDept
+	if err := orm.DbFirstBy(&data, "dept_name like ?", req.DeptName); err != nil {
 		return err
 	}
 	return nil
@@ -99,12 +99,12 @@ func (o *Dept) AddHandler(c *gin.Context) {
 
 // UpdateHandler 修改
 func (o *Dept) UpdateHandler(c *gin.Context) {
-	var dept model.SysDept
-	if err := c.ShouldBind(&dept); err != nil {
+	var data model.SysDept
+	if err := c.ShouldBind(&data); err != nil {
 		ctx.JSONWriteError(err, c)
 		return
 	}
-	if err := orm.DbUpdateModel(dept); err != nil {
+	if err := orm.DbUpdateModel(data); err != nil {
 		ctx.JSONWriteError(err, c)
 		return
 	}
