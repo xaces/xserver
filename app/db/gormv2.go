@@ -14,7 +14,7 @@ import (
 
 func initTables(db *gorm.DB) {
 	db.AutoMigrate(&model.SysMenu{}, &model.SysRole{}, &model.SysUser{},
-		&model.SysDictType{}, &model.SysDictData{}, &model.SysDept{}, &model.SysPost{})
+		&model.SysDictType{}, &model.SysDictData{}, &model.SysDept{}, &model.SysPost{}, &model.SysFile{})
 	orm.SetDB(db.Debug())
 }
 

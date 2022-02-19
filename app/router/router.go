@@ -36,6 +36,7 @@ func initRouter(o *Option) *gin.Engine {
 	root.GET("/captcha", controller.CaptchaHandler)
 	root.POST("/login", controller.LoginHandler)
 	root.POST("/logout", controller.LogoutHandler)
+	root.POST("/file/upload", controller.FileUploadHandler)
 	jwt := root.Group("")
 	jwt.Use(middleware.JWTAuth())
 	// jwt.GET("/getRouters", controller.GetRoutesHandler)
@@ -47,6 +48,8 @@ func initRouter(o *Option) *gin.Engine {
 	// system.PostRouters(sys)
 	system.DictDataRouters(sys)
 	system.DictTypeRouters(sys)
+	system.FileRouters(sys)
+	system.NoticeRouters(sys)
 	return r
 }
 
