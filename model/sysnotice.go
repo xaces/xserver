@@ -1,7 +1,7 @@
 package model
 
-// SysNotice
-type SysNotice struct {
+// SysNoticeOpt
+type SysNoticeOpt struct {
 	Id         uint64 `json:"id" gorm:"primary_key"`
 	Title      string `json:"title"`
 	Content    string `json:"content"`
@@ -10,7 +10,12 @@ type SysNotice struct {
 	Accept     string `json:"accept"`
 	AcceptName string `json:"acceptName"`
 	Type       string `json:"type"`
-	CreatedAt  jtime  `json:"createTime" gorm:"column:created_time;"`
+}
+
+// SysNotice
+type SysNotice struct {
+	SysNoticeOpt
+	CreatedAt jtime `json:"createTime" gorm:"column:created_time;"`
 }
 
 func (o *SysNotice) TableName() string {

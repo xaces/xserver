@@ -1,7 +1,7 @@
 package model
 
-// SysDept 操作请求(获取/修改/更新)
-type SysDept struct {
+// SysDept
+type SysDeptOpt struct {
 	Id       uint64 `json:"deptId" gorm:"primary_key"`
 	ParentId uint64 `json:"parentId"`
 	DeptName string `json:"deptName"`
@@ -11,6 +11,11 @@ type SysDept struct {
 	Email    string `json:"email"`
 	Sort     int    `json:"sort"`
 	Enable   uint8  `json:"enable" gorm:"default:1;comment:0禁用1启动;"`
+}
+
+type SysDept struct {
+	SysDeptOpt
+	CreatedAt jtime `json:"createTime" gorm:"column:created_time;"`
 }
 
 func (o *SysDept) TableName() string {

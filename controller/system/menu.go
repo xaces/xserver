@@ -10,7 +10,7 @@ import (
 	"github.com/wlgd/xutils/orm"
 )
 
-// Menu 系统管理菜单
+// Menu
 type Menu struct {
 }
 
@@ -26,15 +26,10 @@ func (o *Menu) ListHandler(c *gin.Context) {
 	ctx.JSONOk().Write(gin.H{"count": totalCount, "data": menus}, c)
 }
 
-// GetHandler 查询菜单详细
+// GetHandler 查询详细
 func (o *Menu) GetHandler(c *gin.Context) {
-	getId, _ := ctx.ParamInt(c, "id")
 	var data model.SysMenu
-	if err := orm.DbFirstById(&data, getId); err != nil {
-		ctx.JSONWriteError(err, c)
-		return
-	}
-	ctx.JSONOk().WriteData(data, c)
+	service.QueryById(&data, c)
 }
 
 // AddHandler 新增
@@ -65,18 +60,9 @@ func (o *Menu) UpdateHandler(c *gin.Context) {
 	ctx.JSONOk().WriteTo(c)
 }
 
-// DeleteHandler 删除菜单
+// DeleteHandler 删除
 func (o *Menu) DeleteHandler(c *gin.Context) {
-	id, err := ctx.ParamInt(c, "id")
-	if err != nil {
-		ctx.JSONWriteError(err, c)
-		return
-	}
-	if _, err := orm.DbDeleteBy(model.SysMenu{}, "id = ?", id); err != nil {
-		ctx.JSONWriteError(err, c)
-		return
-	}
-	ctx.JSONOk().WriteTo(c)
+	service.Deletes(&model.SysMenu{}, c)
 }
 
 func MenuRouters(r *gin.RouterGroup) {

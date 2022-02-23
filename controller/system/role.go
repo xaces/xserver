@@ -4,7 +4,6 @@ import (
 	"xserver/middleware"
 	"xserver/model"
 	"xserver/service"
-	"xserver/util"
 
 	"github.com/wlgd/xutils/ctx"
 
@@ -12,7 +11,7 @@ import (
 	"github.com/wlgd/xutils/orm"
 )
 
-// Role 系统角色
+// Role
 type Role struct {
 }
 
@@ -35,17 +34,8 @@ func (o *Role) PageHandler(c *gin.Context) {
 
 // GetHandler 查询
 func (o *Role) GetHandler(c *gin.Context) {
-	roleId, err := ctx.ParamInt(c, "id")
-	if err != nil {
-		ctx.JSONWriteError(err, c)
-		return
-	}
-	var role model.SysRole
-	if err := orm.DbFirstById(&role, roleId); err != nil {
-		ctx.JSONWriteError(err, c)
-		return
-	}
-	ctx.JSONOk().WriteData(role, c)
+	var data model.SysRole
+	service.QueryById(&data, c)
 }
 
 // GetRolePowerHandler 查询
@@ -123,17 +113,7 @@ func (o *Role) EnableHandler(c *gin.Context) {
 
 // DeleteHandler 删除
 func (o *Role) DeleteHandler(c *gin.Context) {
-	idstr := ctx.ParamString(c, "id")
-	if idstr == "" {
-		ctx.JSONError().WriteTo(c)
-		return
-	}
-	ids := util.StringToIntSlice(idstr, ",")
-	if err := orm.DbDeleteByIds(model.SysRole{}, ids); err != nil {
-		ctx.JSONWriteError(err, c)
-		return
-	}
-	ctx.JSONOk().WriteTo(c)
+	service.Deletes(&model.SysRole{}, c)
 }
 
 func RoleRouters(r *gin.RouterGroup) {

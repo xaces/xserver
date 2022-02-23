@@ -3,7 +3,6 @@ package system
 import (
 	"xserver/model"
 	"xserver/service"
-	"xserver/util"
 
 	"github.com/wlgd/xutils/ctx"
 	"github.com/wlgd/xutils/orm"
@@ -11,27 +10,23 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// Dict 系统管理字典
+// Dict
 type Dict struct {
 }
 
-// ListHandler 字典列表
+// ListHandler 列表
 func (o *Dict) ListHandler(c *gin.Context) {
 	var param service.DictDataPage
 	if err := c.ShouldBind(&param); err != nil {
 		ctx.JSONWriteError(err, c)
 		return
 	}
-	var dicts []model.SysDictData
-	totalCount, err := orm.DbPage(&model.SysDictData{}, param.Where()).Find(param.PageNum, param.PageSize, &dicts)
-	if err == nil {
-		ctx.JSONOk().Write(gin.H{"total": totalCount, "rows": dicts}, c)
-		return
-	}
-	ctx.JSONWriteError(err, c)
+	var data []model.SysDictData
+	totalCount, _ := orm.DbPage(&model.SysDictData{}, param.Where()).Find(param.PageNum, param.PageSize, &data)
+	ctx.JSONOk().Write(gin.H{"total": totalCount, "rows": data}, c)
 }
 
-// ListExcludeHandler 字典列表（排除节点）
+// ListExcludeHandler 列表（排除节点）
 func (o *Dict) ListExcludeHandler(c *gin.Context) {
 	// id, err := ctxQueryInt(c, "id")
 	// if err != nil {
@@ -43,23 +38,13 @@ func (o *Dict) ListExcludeHandler(c *gin.Context) {
 	ctx.JSONOk().WriteTo(c)
 }
 
-// GetHandler 查询字典详细
+// GetHandler 查询详细
 func (o *Dict) GetHandler(c *gin.Context) {
-	getId, err := ctx.ParamInt(c, "id")
-	if err != nil {
-		ctx.JSONWriteError(err, c)
-		return
-	}
 	var data model.SysDictData
-	err = orm.DbFirstById(&data, getId)
-	if err != nil {
-		ctx.JSONWriteError(err, c)
-		return
-	}
-	ctx.JSONOk().WriteData(data, c)
+	service.QueryById(&data, c)
 }
 
-// DictTypeHandler 根据字典类型查询字典数据信息
+// DictTypeHandler
 func (o *Dict) DictTypeHandler(c *gin.Context) {
 	dtype := ctx.ParamString(c, "id")
 	var data []model.SysDictData
@@ -71,7 +56,7 @@ func (o *Dict) DictTypeHandler(c *gin.Context) {
 	ctx.JSONOk().WriteData(data, c)
 }
 
-// RoleDeptTreeselectHandler 根据角色ID查询字典树结构
+// RoleDeptTreeselectHandler 根据角色ID查询树结构
 func (o *Dict) RoleDeptTreeselectHandler(c *gin.Context) {
 	ctx.JSONOk().WriteTo(c)
 }
@@ -91,7 +76,7 @@ func (o *Dict) AddHandler(c *gin.Context) {
 	ctx.JSONOk().WriteTo(c)
 }
 
-// UpdateHandler 修改字典
+// UpdateHandler 修改
 func (o *Dict) UpdateHandler(c *gin.Context) {
 	var data model.SysDictData
 	//获取参数
@@ -106,19 +91,9 @@ func (o *Dict) UpdateHandler(c *gin.Context) {
 	ctx.JSONOk().WriteTo(c)
 }
 
-// DeleteHandler 删除字典
+// DeleteHandler 删除
 func (o *Dict) DeleteHandler(c *gin.Context) {
-	idstr := ctx.ParamString(c, "id")
-	if idstr == "" {
-		ctx.JSONError().WriteTo(c)
-		return
-	}
-	ids := util.StringToIntSlice(idstr, ",")
-	if err := orm.DbDeleteByIds(model.SysDictData{}, ids); err != nil {
-		ctx.JSONWriteError(err, c)
-		return
-	}
-	ctx.JSONOk().WriteTo(c)
+	service.Deletes(&model.SysDictDataOpt{}, c)
 }
 
 func DictDataRouters(r *gin.RouterGroup) {

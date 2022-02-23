@@ -4,7 +4,6 @@ import (
 	"errors"
 	"xserver/model"
 	"xserver/service"
-	"xserver/util"
 
 	"github.com/wlgd/xutils/ctx"
 	"github.com/wlgd/xutils/orm"
@@ -28,7 +27,7 @@ func (o *Dept) PageHandler(c *gin.Context) {
 	ctx.JSONOk().WriteData(depts, c)
 }
 
-// ListExcludeHandler 部门列表（排除节点）
+// ListExcludeHandler 列表（排除节点）
 func (o *Dept) ListExcludeHandler(c *gin.Context) {
 	// id, err := ctxQueryInt(c, "id")
 	// if err != nil {
@@ -40,20 +39,10 @@ func (o *Dept) ListExcludeHandler(c *gin.Context) {
 	ctx.JSONOk().WriteTo(c)
 }
 
-// GetHandler 查询部门详细
+// GetHandler 查询详细
 func (o *Dept) GetHandler(c *gin.Context) {
-	getId, err := ctx.ParamInt(c, "id")
-	if err != nil {
-		ctx.JSONWriteError(err, c)
-		return
-	}
 	var data model.SysDept
-	err = orm.DbFirstById(&data, getId)
-	if err != nil {
-		ctx.JSONWriteError(err, c)
-		return
-	}
-	ctx.JSONOk().WriteData(data, c)
+	service.QueryById(&data, c)
 }
 
 // TreeselectHandler 查询下拉树结构
@@ -113,17 +102,7 @@ func (o *Dept) UpdateHandler(c *gin.Context) {
 
 // DeleteHandler 删除
 func (o *Dept) DeleteHandler(c *gin.Context) {
-	idstr := ctx.ParamString(c, "id")
-	if idstr == "" {
-		ctx.JSONError().WriteTo(c)
-		return
-	}
-	ids := util.StringToIntSlice(idstr, ",")
-	if err := orm.DbDeleteByIds(model.SysDept{}, ids); err != nil {
-		ctx.JSONWriteError(err, c)
-		return
-	}
-	ctx.JSONOk().WriteTo(c)
+	service.Deletes(&model.SysDept{}, c)
 }
 
 func DeptRouters(r *gin.RouterGroup) {

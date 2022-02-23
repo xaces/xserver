@@ -4,8 +4,8 @@ type SysFileOpt struct {
 	Id         uint64 `json:"fileId" gorm:"primary_key"`
 	FileName   string `json:"fileName"`
 	FilePath   string `json:"filePath"`
-	FileType   string `json:"roleType"`
-	FileSize   string `json:"fileSize"`
+	FileType   string `json:"fileType"`
+	FileSize   int64  `json:"fileSize"`
 	FileDesc   string `json:"fileDesc"`
 	TargetDate string `json:"targetDate"`
 }

@@ -2,10 +2,10 @@ package controller
 
 import (
 	"errors"
+	"strings"
 	"xserver/middleware"
 	"xserver/model"
 	"xserver/service"
-	"strings"
 
 	"github.com/wlgd/xutils/ctx"
 	"github.com/wlgd/xutils/orm"
@@ -50,6 +50,7 @@ func LoginHandler(c *gin.Context) {
 			user.RoleId = model.SysUserRoleId
 			user.NickName = "administrator"
 			user.Password = service.NewSysPassword(user, lo.Password)
+			user.CreatedBy = "default"
 			err = orm.DbCreate(user)
 		}
 	}

@@ -11,7 +11,7 @@ func UUID() string {
 	return u.String()
 }
 
-// ServeId 生成服务ID
-func ServeId() string {
+// NUID ID
+func NUID() string {
 	return nuid.Next()
 }

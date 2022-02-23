@@ -4,7 +4,7 @@ import "github.com/wlgd/xutils/orm"
 
 // menuPage 查询页
 type MenuPage struct {
-	basePage
+	BasePage
 	MenuName string `form:"menuName"` // 菜单名称
 	Visible  string `form:"visible"`  // 菜单状态
 }

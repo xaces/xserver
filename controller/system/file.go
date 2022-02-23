@@ -1,9 +1,9 @@
 package system
 
 import (
+	"xserver/middleware"
 	"xserver/model"
 	"xserver/service"
-	"xserver/util"
 
 	"github.com/wlgd/xutils/ctx"
 	"github.com/wlgd/xutils/orm"
@@ -11,40 +11,26 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// File 系统管理字典类型
+// File
 type File struct {
 }
 
-// ListHandler 字典类型列表
+// ListHandler 列表
 func (o *File) ListHandler(c *gin.Context) {
-	var param service.FilePage
+	var param service.BasePage
 	if err := c.ShouldBind(&param); err != nil {
 		ctx.JSONWriteError(err, c)
 		return
 	}
 	var data []model.SysFile
-	totalCount, err := orm.DbPage(&model.SysFile{}, param.Where()).Find(param.PageNum, param.PageSize, &data)
-	if err == nil {
-		ctx.JSONOk().Write(gin.H{"total": totalCount, "rows": data}, c)
-		return
-	}
-	ctx.JSONWriteError(err, c)
+	totalCount, _ := orm.DbPage(&model.SysFile{}, param.Where()).Find(param.PageNum, param.PageSize, &data)
+	ctx.JSONOk().Write(gin.H{"total": totalCount, "data": data}, c)
 }
 
-// GetHandler 查询字典详细
+// GetHandler 查询详细
 func (o *File) GetHandler(c *gin.Context) {
-	getId, err := ctx.ParamInt(c, "id")
-	if err != nil {
-		ctx.JSONWriteError(err, c)
-		return
-	}
-	var File model.SysFile
-	err = orm.DbFirstById(&File, getId)
-	if err != nil {
-		ctx.JSONWriteError(err, c)
-		return
-	}
-	ctx.JSONOk().WriteData(File, c)
+	var data model.SysFile
+	service.QueryById(&data, c)
 }
 
 // AddHandler 新增
@@ -79,13 +65,29 @@ func (o *File) UpdateHandler(c *gin.Context) {
 
 // DeleteHandler 删除
 func (o *File) DeleteHandler(c *gin.Context) {
-	idstr := ctx.ParamString(c, "id")
-	if idstr == "" {
-		ctx.JSONError().WriteTo(c)
+	service.Deletes(&model.SysFile{}, c)
+}
+
+func (o *File) UploadHandler(c *gin.Context) {
+	fileHead, err := c.FormFile("file")
+	if err != nil {
+		ctx.JSONWriteError(err, c)
 		return
 	}
-	ids := util.StringToIntSlice(idstr, ",")
-	if err := orm.DbDeleteByIds(model.SysFile{}, ids); err != nil {
+	filename := "" + fileHead.Filename
+	// TODO save db
+	if err := c.SaveUploadedFile(fileHead, filename); err != nil {
+		ctx.JSONWriteError(err, c)
+		return
+	}
+	u := middleware.GetUserToken(c)
+	data := &model.SysFile{}
+	data.FileName = fileHead.Filename
+	data.FilePath = filename
+	data.FileSize = fileHead.Size
+	data.FileDesc = fileHead.Filename
+	data.CreatedBy = u.UserName
+	if err := orm.DbCreate(data); err != nil {
 		ctx.JSONWriteError(err, c)
 		return
 	}
@@ -99,4 +101,5 @@ func FileRouters(r *gin.RouterGroup) {
 	r.POST("/file", sysFile.AddHandler)
 	r.PUT("/file", sysFile.UpdateHandler)
 	r.DELETE("/file/:id", sysFile.DeleteHandler)
+	r.POST("/file/upload", sysFile.UploadHandler)
 }

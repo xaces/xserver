@@ -28,12 +28,12 @@ func (p *program) Stop(s svc.Service) error {
 }
 
 func main() {
-	svvconfig := &svc.Config{
+	svconf := &svc.Config{
 		Name:        "xvms.server",
 		DisplayName: "xserver",
 		Description: "This is server application",
 	}
-	s, err := svc.New(&program{}, svvconfig)
+	s, err := svc.New(&program{}, svconf)
 	if err != nil {
 		log.Fatal(err)
 	}

@@ -4,7 +4,7 @@ import "github.com/wlgd/xutils/orm"
 
 // DictDataPage 查询页
 type DictDataPage struct {
-	basePage
+	BasePage
 	DictType string `form:"dictType"` // 字典名称
 }
 
@@ -17,7 +17,7 @@ func (s *DictDataPage) Where() *orm.DbWhere {
 
 // DictTypePage 查询页
 type DictTypePage struct {
-	basePage
+	BasePage
 	DictType  string `form:"dictType"`  // 字典名称
 	DictLabel string `form:"dictLabel"` // 字典标签
 }

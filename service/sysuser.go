@@ -11,7 +11,7 @@ import (
 // NewSysPassword 生成密码
 func NewSysPassword(u *model.SysUser, password string) string {
 	if u.Salt == "" {
-		u.Salt = util.RandomString(6)
+		u.Salt = util.StringRandom(6)
 	}
 	token := u.UserName + password + u.Salt
 	return gmd5.MustEncryptString(token)
@@ -19,7 +19,7 @@ func NewSysPassword(u *model.SysUser, password string) string {
 
 // UserPage 查询页
 type UserPage struct {
-	basePage
+	BasePage
 	Page    int    `form:"page"`  // 每页数
 	Limit   int    `form:"limit"` // 当前页码
 	KeyWord string `form:"keyWord"`

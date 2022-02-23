@@ -8,7 +8,7 @@ import (
 
 // RolePage 查询页
 type RolePage struct {
-	basePage
+	BasePage
 	MenuName string `form:"menuName"` // 菜单名称
 	Visible  string `form:"visible"`  // 菜单状态
 }

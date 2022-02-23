@@ -10,28 +10,27 @@ type TreeNode struct {
 	Children []TreeNode `json:"children,omitempty"`
 }
 
-type treeTag struct {
+type TreeTag struct {
 	Id     string
 	Label  string
 	Status string
 }
 
-type tree struct {
-	Tag treeTag
+type Tree struct {
+	Tag TreeTag
 }
 
 func valToUint64(data reflect.Value, name string) uint64 {
 	return data.FieldByName(name).Uint()
 }
 
-func NewTree(id, lable, status string, data interface{}) []TreeNode {
-	tag := treeTag{Id: id, Label: lable, Status: status}
-	t := tree{Tag: tag}
-	return t.build(data)
+func NewTree(id, lable, status string) *Tree {
+	t := Tree{Tag: TreeTag{Id: id, Label: lable, Status: status}}
+	return &t
 }
 
 // 菜单Tree
-func (t *tree) build(data interface{}) []TreeNode {
+func (t *Tree) Build(data interface{}) []TreeNode {
 	var trees []TreeNode
 	s := reflect.ValueOf(data)
 	switch s.Kind() {
@@ -43,7 +42,7 @@ func (t *tree) build(data interface{}) []TreeNode {
 				continue
 			}
 			node := t.newNode(v)
-			t.filterChildren(s, node)
+			t.filterChildren(s, "ParentId", node)
 			trees = append(trees, node)
 		}
 	}
@@ -51,7 +50,7 @@ func (t *tree) build(data interface{}) []TreeNode {
 }
 
 // newNode 创建数节点
-func (t *tree) newNode(v reflect.Value) TreeNode {
+func (t *Tree) newNode(v reflect.Value) TreeNode {
 	id := valToUint64(v, t.Tag.Id)
 	label := v.FieldByName(t.Tag.Label).String()
 	status := v.FieldByName(t.Tag.Status).String()
@@ -59,7 +58,7 @@ func (t *tree) newNode(v reflect.Value) TreeNode {
 }
 
 // hasParent 判断权限列表中是否有父节点
-func (t *tree) hasParent(data reflect.Value, parentId uint64) bool {
+func (t *Tree) hasParent(data reflect.Value, parentId uint64) bool {
 	for i := 0; i < data.Len(); i++ {
 		id := valToUint64(data.Index(i), t.Tag.Id)
 		if id != parentId {
@@ -71,15 +70,15 @@ func (t *tree) hasParent(data reflect.Value, parentId uint64) bool {
 }
 
 // filterChildren 获取子节点
-func (t *tree) filterChildren(data reflect.Value, n TreeNode) {
+func (t *Tree) filterChildren(data reflect.Value, parentTag string, n TreeNode) {
 	for i := 0; i < data.Len(); i++ {
 		v := data.Index(i)
-		pId := valToUint64(v, "ParentId")
+		pId := valToUint64(v, parentTag)
 		if pId != n.Id {
 			continue
 		}
 		node := t.newNode(v)
-		t.filterChildren(data, node)
+		t.filterChildren(data, parentTag, node)
 		n.Children = append(n.Children, node)
 	}
 }

@@ -4,7 +4,6 @@ import (
 	"errors"
 	"xserver/model"
 	"xserver/service"
-	"xserver/util"
 
 	"xserver/middleware"
 
@@ -18,7 +17,7 @@ const (
 	defaultpwd = "123456"
 )
 
-// User 系统管理用户
+// User
 type User struct {
 }
 
@@ -41,17 +40,8 @@ func (o *User) PageHandler(c *gin.Context) {
 
 // GetHandler 查询详细
 func (o *User) GetHandler(c *gin.Context) {
-	getId, err := ctx.ParamInt(c, "id")
-	if err != nil {
-		ctx.JSONWriteError(err, c)
-		return
-	}
 	var data model.SysUser
-	if err := orm.DbFirstById(&data, getId); err != nil {
-		ctx.JSONWriteError(err, c)
-		return
-	}
-	ctx.JSONOk().WriteData(&data, c)
+	service.QueryById(&data, c)
 }
 
 // GetRolesHandler
@@ -222,17 +212,7 @@ func (o *User) ResetPwdHandler(c *gin.Context) {
 
 // DeleteHandler 删除
 func (o *User) DeleteHandler(c *gin.Context) {
-	idstr := ctx.ParamString(c, "id")
-	if idstr == "" {
-		ctx.JSONError().WriteTo(c)
-		return
-	}
-	ids := util.StringToIntSlice(idstr, ",")
-	if err := orm.DbDeleteByIds(model.SysUser{}, ids); err != nil {
-		ctx.JSONWriteError(err, c)
-		return
-	}
-	ctx.JSONOk().WriteTo(c)
+	service.Deletes(&model.SysUser{}, c)
 }
 
 func UserRouters(r *gin.RouterGroup) {
