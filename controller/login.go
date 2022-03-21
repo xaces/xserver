@@ -2,6 +2,7 @@ package controller
 
 import (
 	"errors"
+	"net/http"
 	"strings"
 	"xserver/middleware"
 	"xserver/model"
@@ -17,9 +18,9 @@ import (
 var store = base64Captcha.DefaultMemStore
 
 var (
-	errLogin          = errors.New("Account or pssword error")
-	errCaptachaVerify = errors.New("Captcha verify error")
-	errAuth           = errors.New("Authentication error")
+	errLogin          = errors.New("account or pssword error")
+	errCaptachaVerify = errors.New("captcha verify error")
+	errAuth           = errors.New("authentication error")
 )
 
 type loginReq struct {
@@ -46,19 +47,19 @@ func LoginHandler(c *gin.Context) {
 	err = orm.DbFirstWhere(user, user)
 	if err != nil {
 		if lo.Username == model.SysUserName {
-			user.Enable = 1
-			user.RoleId = model.SysUserRoleId
-			user.NickName = "administrator"
-			user.Password = service.NewSysPassword(user, lo.Password)
-			user.CreatedBy = "default"
-			err = orm.DbCreate(user)
+			user.Password = lo.Password
+			err = service.SysUserCreate(user)
 		}
 	}
 	if err != nil {
 		ctx.JSONWriteError(errLogin, c)
 		return
 	}
-	verifyPassword := service.NewSysPassword(user, lo.Password)
+	if user.Enable == 0 {
+		ctx.JSONWriteError(errAuth, c)
+		return
+	}
+	verifyPassword := service.SysUserPassword(user, lo.Password)
 	if strings.Compare(user.Password, verifyPassword) != 0 {
 		ctx.JSONWriteError(errLogin, c)
 		return
@@ -68,11 +69,8 @@ func LoginHandler(c *gin.Context) {
 
 // 登录以后签发jwt
 func tokenNext(c *gin.Context, u *model.SysUser) {
-	// proxy := middleware.ProxyStation{Guid: user.ProxyGuid}
-	// if s := mnger.Station.Get(user.ProxyGuid); s != nil {
-	// 	proxy.Address = s.Address
-	// }
-	token, err := middleware.GenerateToken(middleware.UserToken{UserId: u.Id, RoleId: u.RoleId, UserName: u.UserName})
+	// 从缓存中获取主账号对应工作站信息
+	token, err := middleware.GenerateToken(u.SysUserToken)
 	if err != nil {
 		ctx.JSONWriteError(err, c)
 		return
@@ -82,8 +80,7 @@ func tokenNext(c *gin.Context, u *model.SysUser) {
 
 // LogoutHandler 注册
 func LogoutHandler(c *gin.Context) {
-	// c.Redirect(http.StatusFound, pkg.Conf.Local.ServeRoot)
-	c.Abort()
+	c.HTML(http.StatusOK, "login.html", nil)
 }
 
 // CaptchaHandler 图形验证码
@@ -103,7 +100,7 @@ func CaptchaHandler(c *gin.Context) {
 func UserInfoHandler(c *gin.Context) {
 	tok := middleware.GetUserToken(c)
 	var user model.SysUser
-	if err := orm.DbFirstById(&user, tok.UserId); err != nil {
+	if err := orm.DbFirstById(&user, tok.Id); err != nil {
 		ctx.JSONWriteError(err, c)
 		return
 	}

@@ -22,8 +22,8 @@ func (o *Menu) ListHandler(c *gin.Context) {
 		return
 	}
 	var menus []model.SysMenu
-	totalCount, _ := orm.DbPage(&model.SysMenu{}, param.Where()).Find(param.PageNum, param.PageSize, &menus)
-	ctx.JSONOk().Write(gin.H{"count": totalCount, "data": menus}, c)
+	total, _ := orm.DbPage(&model.SysMenu{}, param.Where()).Find(param.PageNum, param.PageSize, &menus)
+	ctx.JSONOk().Write(gin.H{"total": total, "data": menus}, c)
 }
 
 // GetHandler 查询详细

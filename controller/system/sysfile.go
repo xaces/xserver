@@ -23,8 +23,8 @@ func (o *File) ListHandler(c *gin.Context) {
 		return
 	}
 	var data []model.SysFile
-	totalCount, _ := orm.DbPage(&model.SysFile{}, param.Where()).Find(param.PageNum, param.PageSize, &data)
-	ctx.JSONOk().Write(gin.H{"total": totalCount, "data": data}, c)
+	total, _ := orm.DbPage(&model.SysFile{}, param.Where()).Find(param.PageNum, param.PageSize, &data)
+	ctx.JSONOk().Write(gin.H{"total": total, "data": data}, c)
 }
 
 // GetHandler 查询详细
@@ -80,13 +80,13 @@ func (o *File) UploadHandler(c *gin.Context) {
 		ctx.JSONWriteError(err, c)
 		return
 	}
-	u := middleware.GetUserToken(c)
+	tok := middleware.GetUserToken(c)
 	data := &model.SysFile{}
 	data.FileName = fileHead.Filename
 	data.FilePath = filename
 	data.FileSize = fileHead.Size
 	data.FileDesc = fileHead.Filename
-	data.CreatedBy = u.UserName
+	data.CreatedBy = tok.UserName
 	if err := orm.DbCreate(data); err != nil {
 		ctx.JSONWriteError(err, c)
 		return

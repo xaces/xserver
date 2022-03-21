@@ -21,14 +21,14 @@ func (s *RolePage) Where() *orm.DbWhere {
 	return &where
 }
 
-// QueryRoleById 查询指定权限byID
-func DbQueryRoleById(id uint64) (role model.SysRole, err error) {
+// SysRoleQueryById 查询指定权限byID
+func SysRoleQueryById(id uint64) (role model.SysRole, err error) {
 	err = orm.DB().Where("id = ?", id).Preload("SysMenus").First(&role).Error
 	return
 }
 
-// DbDelSysMenusByRoleId 删除角色关联数据
-func DbDelSysMenusByRoleId(id uint64) error {
+// SysRoleDelSysMenusById 删除角色关联数据
+func SysRoleDelSysMenusById(id uint64) error {
 	// role, err := DbQueryRoleById(id)
 	// if err != nil {
 	// 	return err

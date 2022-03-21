@@ -1,6 +1,7 @@
 package service
 
 import (
+	"errors"
 	"xserver/model"
 	"xserver/pkg/gmd5"
 	"xserver/util"
@@ -8,14 +9,9 @@ import (
 	"github.com/wlgd/xutils/orm"
 )
 
-// NewSysPassword 生成密码
-func NewSysPassword(u *model.SysUser, password string) string {
-	if u.Salt == "" {
-		u.Salt = util.StringRandom(6)
-	}
-	token := u.UserName + password + u.Salt
-	return gmd5.MustEncryptString(token)
-}
+const (
+	defaultpwd = "123456"
+)
 
 // UserPage 查询页
 type UserPage struct {
@@ -34,21 +30,35 @@ func (s *UserPage) Where() *orm.DbWhere {
 	return &where
 }
 
-func CheckAddUser(req *model.SysUser) error {
-	var user model.SysUser
-	if err := orm.DbFirstBy(&user, "user_name like ?", req.UserName); err != nil {
-		return err
+// SysUserPassword 生成密码
+func SysUserPassword(u *model.SysUser, password string) string {
+	if u.Salt == "" {
+		u.Salt = util.StringRandom(6)
 	}
+	token := u.UserName + password + u.Salt
+	return gmd5.MustEncryptString(token)
+}
 
+func SysUserIsExist(req *model.SysUser) error {
+	var user model.SysUser
+	db := orm.DB().Or("user_name like ?", req.UserName)
 	if req.Phone != "" {
-		if err := orm.DbFirstBy(&user, "phone like ?", req.Phone); err != nil {
-			return err
-		}
+		db = db.Or("phone like ?", req.Phone)
 	}
 	if req.Email != "" {
-		if err := orm.DbFirstBy(&user, "email like ?", req.Email); err != nil {
-			return err
-		}
+		db = db.Or("email like ?", req.Email)
 	}
-	return nil
+	return db.First(&user).Error
+}
+
+func SysUserCreate(u *model.SysUser) error {
+	if SysUserIsExist(u) == nil {
+		return errors.New("user already exists")
+	}
+	u.Enable = 1
+	if u.Password == "" {
+		u.Password = defaultpwd
+	}
+	u.Password = SysUserPassword(u, u.Password)
+	return orm.DbCreate(u)
 }

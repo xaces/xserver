@@ -3,6 +3,7 @@ package middleware
 import (
 	"errors"
 	"time"
+	"xserver/model"
 
 	"github.com/wlgd/xutils/ctx"
 
@@ -10,15 +11,9 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type UserToken struct {
-	UserId   uint64
-	RoleId   uint64
-	UserName string
-}
-
 // UserClaims 用户Claims
 type UserClaims struct {
-	UserToken
+	model.SysUserToken
 	jwt.StandardClaims
 }
 
@@ -99,10 +94,10 @@ func (j *JWT) RefreshToken(tokenString string) (string, error) {
 }
 
 // GenerateToken 生成Token
-func GenerateToken(s UserToken) (string, error) {
+func GenerateToken(s model.SysUserToken) (string, error) {
 	j := NewJWT()
 	claims := UserClaims{}
-	claims.UserToken = s
+	claims.SysUserToken = s
 	claims.StandardClaims = jwt.StandardClaims{
 		NotBefore: int64(time.Now().Unix() - 1000), // 签名生效时间
 		ExpiresAt: int64(time.Now().Unix() + 3600), // 过期时间 一小时
@@ -136,10 +131,10 @@ func JWTAuth() gin.HandlerFunc {
 }
 
 // GetUserToken 根据Token获取用户信息
-func GetUserToken(c *gin.Context) *UserToken {
+func GetUserToken(c *gin.Context) *model.SysUserToken {
 	claims, _ := c.Get("claims")
 	if claims == nil {
-		return &UserToken{}
+		return &model.SysUserToken{}
 	}
-	return &claims.(*UserClaims).UserToken
+	return &claims.(*UserClaims).SysUserToken
 }

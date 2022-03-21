@@ -22,9 +22,9 @@ func (o *Dept) PageHandler(c *gin.Context) {
 		ctx.JSONWriteError(err, c)
 		return
 	}
-	var depts []model.SysDept
-	orm.DbPage(&model.SysDept{}, param.Where()).Find(param.PageNum, param.PageSize, &depts)
-	ctx.JSONOk().WriteData(depts, c)
+	var data []model.SysDept
+	total, _ := orm.DbPage(&model.SysDept{}, param.Where()).Find(param.PageNum, param.PageSize, &data)
+	ctx.JSONOk().Write(gin.H{"total": total, "data": data}, c)
 }
 
 // ListExcludeHandler 列表（排除节点）

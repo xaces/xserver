@@ -15,7 +15,8 @@ type SysDeptOpt struct {
 
 type SysDept struct {
 	SysDeptOpt
-	CreatedAt jtime `json:"createTime" gorm:"column:created_time;"`
+	CreatedAt jtime     `json:"createTime" gorm:"column:created_time;"`
+	Children  []SysDept `json:"children,omitempty" gorm:"-"`
 }
 
 func (o *SysDept) TableName() string {

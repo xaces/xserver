@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"time"
 	"xserver/controller"
+	"xserver/controller/operation"
 	"xserver/controller/system"
 	"xserver/middleware"
 
@@ -39,17 +40,9 @@ func initRouter(o *Option) *gin.Engine {
 	root.POST("/logout", controller.LogoutHandler)
 	jwt := root.Group("")
 	jwt.Use(middleware.JWTAuth())
-	// jwt.GET("/getRouters", controller.GetRoutesHandler)
-	sys := jwt.Group("/system")
-	system.MenuRouters(sys)
-	system.RoleRouters(sys)
-	system.UserRouters(sys)
-	system.DeptRouters(sys)
-	// system.PostRouters(sys)
-	system.DictDataRouters(sys)
-	system.DictTypeRouters(sys)
-	system.FileRouters(sys)
-	system.NoticeRouters(sys)
+	jwt.Any("/station/*api", controller.ProxyHandler("/station/api"))
+	system.InitRouters(jwt)
+	operation.InitRouters(jwt)
 	return r
 }
 

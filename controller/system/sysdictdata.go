@@ -22,8 +22,8 @@ func (o *Dict) ListHandler(c *gin.Context) {
 		return
 	}
 	var data []model.SysDictData
-	totalCount, _ := orm.DbPage(&model.SysDictData{}, param.Where()).Find(param.PageNum, param.PageSize, &data)
-	ctx.JSONOk().Write(gin.H{"total": totalCount, "rows": data}, c)
+	total, _ := orm.DbPage(&model.SysDictData{}, param.Where()).Find(param.PageNum, param.PageSize, &data)
+	ctx.JSONOk().Write(gin.H{"total": total, "data": data}, c)
 }
 
 // ListExcludeHandler 列表（排除节点）

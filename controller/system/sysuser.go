@@ -2,10 +2,9 @@ package system
 
 import (
 	"errors"
+	"xserver/middleware"
 	"xserver/model"
 	"xserver/service"
-
-	"xserver/middleware"
 
 	"github.com/wlgd/xutils/ctx"
 	"github.com/wlgd/xutils/orm"
@@ -34,8 +33,8 @@ func (o *User) PageHandler(c *gin.Context) {
 		where.String("created_by like ?", tok.UserName) // 非管理员用户只能查看自己创建的用户
 	}
 	var data []model.SysUser
-	totalCount, _ := orm.DbPage(&model.SysUser{}, where).Find(param.Page, param.Limit, &data)
-	ctx.JSONOk().Write(gin.H{"data": data, "count": totalCount}, c)
+	total, _ := orm.DbPage(&model.SysUser{}, where).Find(param.Page, param.Limit, &data)
+	ctx.JSONOk().Write(gin.H{"data": data, "total": total}, c)
 }
 
 // GetHandler 查询详细
@@ -63,13 +62,12 @@ func (o *User) AddHandler(c *gin.Context) {
 		ctx.JSONWriteError(err, c)
 		return
 	}
-	if err := service.CheckAddUser(&data); err == nil {
-		ctx.JSONWriteError(errors.New("user already exists"), c)
-		return
-	}
-	data.CreatedBy = middleware.GetUserToken(c).UserName
-	data.Password = service.NewSysPassword(&data, defaultpwd)
-	if err := orm.DbCreate(&data); err != nil {
+	tok := middleware.GetUserToken(c)
+	data.OrganizeGuid = tok.OrganizeGuid
+	data.OrganizeName = tok.OrganizeName
+	data.CreatedBy = tok.UserName
+	data.UserType = model.SysUserTypeComm
+	if err := service.SysUserCreate(&data); err != nil {
 		ctx.JSONWriteError(err, c)
 		return
 	}
@@ -90,11 +88,6 @@ func (o *User) EnableHandler(c *gin.Context) {
 	ctx.JSONOk().WriteTo(c)
 }
 
-// AddPageHandler 新增界面
-func (o *User) AddPageHandler(c *gin.Context) {
-	ctx.JSONOk().WriteTo(c)
-}
-
 // ExportHandler 导出
 func (o *User) ExportHandler(c *gin.Context) {
 	// var users []model.SysUser
@@ -111,7 +104,7 @@ type updatePwd struct {
 func (o *User) ProfileHandler(c *gin.Context) {
 	tok := middleware.GetUserToken(c)
 	var data model.SysUser
-	if err := orm.DbFirstById(&data, tok.UserId); err != nil {
+	if err := orm.DbFirstById(&data, tok.Id); err != nil {
 		ctx.JSONWriteError(err, c)
 		return
 	}
@@ -127,16 +120,16 @@ func (o *User) UpdatePwdHandler(c *gin.Context) {
 	}
 	tok := middleware.GetUserToken(c)
 	var data model.SysUser
-	if err := orm.DbFirstById(&data, tok.UserId); err != nil {
+	if err := orm.DbFirstById(&data, tok.Id); err != nil {
 		ctx.JSONWriteError(err, c)
 		return
 	}
-	oldPassword := service.NewSysPassword(&data, param.OldPassword)
+	oldPassword := service.SysUserPassword(&data, param.OldPassword)
 	if oldPassword != data.Password {
 		ctx.JSONWriteError(errors.New("old password error"), c)
 		return
 	}
-	newPassword := service.NewSysPassword(&data, param.NewPassword)
+	newPassword := service.SysUserPassword(&data, param.NewPassword)
 	if err := orm.DbUpdateColById(&data, data.Id, "password", newPassword); err != nil {
 		ctx.JSONWriteError(err, c)
 		return
@@ -146,30 +139,24 @@ func (o *User) UpdatePwdHandler(c *gin.Context) {
 
 // ProfileAuatarHandler 上传头像
 func (o *User) ProfileAuatarHandler(c *gin.Context) {
-	// claims, err := middleware.GetUserOfToken(c)
-	// if err != nil {
-	// 	ctx.JSONWriteError(err, c)
-	// 	return
-	// }
-	// path := "/public/upload/"
-	// saveDir := configs.Default.Local.ServeRootPath + path
-	// fileHead, err := c.FormFile("avatarfile")
-	// if err != nil {
-	// 	ctx.JSONWriteError(err, c)
-	// 	return
-	// }
-	// curdate := time.Now().UnixNano()
-	// filename := claims.Username + strconv.FormatInt(curdate, 10) + ".png"
-	// dts := saveDir + filename
-	// if err := c.SaveUploadedFile(fileHead, dts); err != nil {
-	// 	ctx.JSONWriteError(err, c)
-	// 	return
-	// }
-	// avatarURL := configs.Default.Local.ServeRoot + path + filename
-	// if err := orm.DbUpdateColById(&model.SysUser{}, claims.UserID, "avatar", avatarURL); err != nil {
-	// 	ctx.JSONWriteError(err, c)
-	// 	return
-	// }
+	tok := middleware.GetUserToken(c)
+	path := "/public/upload/"
+	fileHead, err := c.FormFile("avatarfile")
+	if err != nil {
+		ctx.JSONWriteError(err, c)
+		return
+	}
+	filename := tok.UserName + ".png"
+	dts := path + filename
+	if err := c.SaveUploadedFile(fileHead, dts); err != nil {
+		ctx.JSONWriteError(err, c)
+		return
+	}
+	avatarURL := dts
+	if err := orm.DbUpdateColById(&model.SysUser{}, tok.Id, "avatar", avatarURL); err != nil {
+		ctx.JSONWriteError(err, c)
+		return
+	}
 	ctx.JSONOk().WriteTo(c)
 }
 
@@ -202,7 +189,7 @@ func (o *User) ResetPwdHandler(c *gin.Context) {
 		ctx.JSONWriteError(err, c)
 		return
 	}
-	newPassword := service.NewSysPassword(&data, defaultpwd)
+	newPassword := service.SysUserPassword(&data, defaultpwd)
 	if err := orm.DbUpdateColById(&data, getId, "password", newPassword); err != nil {
 		ctx.JSONWriteError(err, c)
 		return

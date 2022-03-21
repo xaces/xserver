@@ -22,8 +22,8 @@ func (o *Notice) ListHandler(c *gin.Context) {
 		return
 	}
 	var data []model.SysNotice
-	totalCount, _ := orm.DbPage(&model.SysNotice{}, param.Where()).Find(param.PageNum, param.PageSize, &data)
-	ctx.JSONOk().Write(gin.H{"total": totalCount, "rows": data}, c)
+	total, _ := orm.DbPage(&model.SysNotice{}, param.Where()).Find(param.PageNum, param.PageSize, &data)
+	ctx.JSONOk().Write(gin.H{"total": total, "data": data}, c)
 }
 
 // GetHandler 详细
