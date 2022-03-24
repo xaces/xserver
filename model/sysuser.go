@@ -37,7 +37,6 @@ type SysUserOpt struct {
 	Password  string   `json:"-" gorm:"not null;comment:密码;"`
 	Salt      string   `json:"-" gorm:"not null;comment:盐加密;"`
 	Enable    uint8    `json:"enable" gorm:"default:1;comment:0禁用 1启动;"`
-	DeviceIds JUint64s `json:"deviceIds"`
 	Details   string   `json:"details"`
 }
 

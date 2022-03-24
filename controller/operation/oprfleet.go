@@ -23,6 +23,15 @@ func (o *Fleet) ListHandler(c *gin.Context) {
 	ctx.JSONOk().Write(gin.H{"total": toatl, "data": data}, c)
 }
 
+// LisTreeHandler 列表
+func (o *Fleet) LisTreeHandler(c *gin.Context) {
+	tok := middleware.GetUserToken(c)
+	var data []model.OprOrganization
+	toatl, _ := orm.DbFindBy(&data, "organize_guid = ?", tok.OrganizeGuid)
+	t := service.OprOrganizationTree(data)
+	ctx.JSONOk().Write(gin.H{"total": toatl, "data": t}, c)
+}
+
 // GetHandler 详细
 func (o *Fleet) GetHandler(c *gin.Context) {
 	var data model.OprOrganization
@@ -69,6 +78,7 @@ func (o *Fleet) DeleteHandler(c *gin.Context) {
 func FleetRouters(r *gin.RouterGroup) {
 	o := Fleet{}
 	r.GET("/fleet/list", o.ListHandler)
+	r.GET("/fleet/listree", o.LisTreeHandler)
 	r.GET("/fleet/:id", o.GetHandler)
 	r.POST("/fleet", o.AddHandler)
 	r.PUT("/fleet", o.UpdateHandler)
