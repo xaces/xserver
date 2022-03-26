@@ -14,18 +14,18 @@ func OprPrimaryOrganization(guid string) (model.OprOrganization, error) {
 }
 
 type OprVehicle struct {
-	Id         uint64 `json:"deviceId"`
+	Id         int    `json:"deviceId"`
 	DeviceNo   string `json:"deviceNo"`
 	DeviceName string `json:"deviceName"`
-	ChlsCount  int    `json:"chlsCount"`
-	ChlsName   string `json:"chlsName"`
-	OrganizeId uint64 `json:"organizeId"` // 分组Id
+	ChlCount   int    `json:"chlCount"`
+	ChlNames   string `json:"chlNames"`
+	OrganizeId int    `json:"organizeId"` // 分组Id
 }
 
 type OprOrgainze struct {
-	Id       uint64        `json:"id"`   //
+	Id       int           `json:"id"`   //
 	Name     string        `json:"name"` // 名称
-	ParentId uint64        `json:"parentId"`
+	ParentId int           `json:"parentId"`
 	Vehicles []OprVehicle  `json:"vehis,omitempty" gorm:"-"`
 	Children []OprOrgainze `json:"children,omitempty" gorm:"-"`
 }

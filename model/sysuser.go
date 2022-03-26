@@ -28,17 +28,17 @@ type SysUserToken struct {
 // SysUserOpt
 type SysUserOpt struct {
 	SysUserToken
-	NickName  string   `json:"nickname" gorm:"not null;comment:用户昵称;"`
-	UserType  int      `json:"userType"`
-	DeviceIds JUint64s `json:"deviceIds"` // 10w个
-	Email     string   `json:"email" gorm:"comment:用户邮箱;"`
-	Phone     string   `json:"phone" gorm:"size:11;default:'';comment:手机号码;"`
-	Sex       string   `json:"sex" gorm:"size:1;default:'0';comment:用户性别(1男 2女 0未知);"`
-	Avatar    string   `json:"avatar" gorm:"comment:头像路径;"`
-	Password  string   `json:"-" gorm:"not null;comment:密码;"`
-	Salt      string   `json:"-" gorm:"not null;comment:盐加密;"`
-	Enable    uint8    `json:"enable" gorm:"default:1;comment:0禁用 1启动;"`
-	Details   string   `json:"details"`
+	NickName  string `json:"nickname" gorm:"not null;comment:用户昵称;"`
+	UserType  int    `json:"userType"`
+	DeviceIds string `json:"deviceIds"` // *,代表所有， 1,2,3
+	Email     string `json:"email" gorm:"comment:用户邮箱;"`
+	Phone     string `json:"phone" gorm:"size:11;default:'';comment:手机号码;"`
+	Sex       string `json:"sex" gorm:"size:1;default:'0';comment:用户性别(1男 2女 0未知);"`
+	Avatar    string `json:"avatar" gorm:"comment:头像路径;"`
+	Password  string `json:"-" gorm:"not null;comment:密码;"`
+	Salt      string `json:"-" gorm:"not null;comment:盐加密;"`
+	Enable    uint8  `json:"enable" gorm:"default:1;comment:0禁用 1启动;"`
+	Details   string `json:"details"`
 }
 
 //1、主账号绑定工作站

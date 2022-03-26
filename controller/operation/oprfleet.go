@@ -83,14 +83,19 @@ func (o *Fleet) VehicleLisTreeHandler(c *gin.Context) {
 		return
 	}
 	// 过滤用户数据
-	du, ok := mnger.UserDevs[tok.Id]
+	u, ok := mnger.UserDevs[tok.Id]
 	if !ok {
 		ctx.JSONOk().WriteTo(c)
 		return
 	}
+	if u.DeviceIds == "*" {
+		tree := service.OprOrganizeTree(tok.OrganizeGuid, res)
+		ctx.JSONOk().WriteData(tree, c)
+		return
+	}
 	var data []service.OprVehicle
 	for _, v := range res {
-		if !du.Include(v.Id) {
+		if !u.Include(v.Id) {
 			continue
 		}
 		data = append(data, v)

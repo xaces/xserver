@@ -6,7 +6,6 @@ import (
 	"xserver/middleware"
 	"xserver/model"
 	"xserver/service"
-	"xserver/util"
 
 	"github.com/wlgd/xutils/ctx"
 	"github.com/wlgd/xutils/orm"
@@ -216,12 +215,13 @@ func (o *User) AuthDevicesHandler(c *gin.Context) {
 		ctx.JSONWriteError(err, c)
 		return
 	}
-	ids := util.StringToIntSlice(p.DeviceIds, ",")
 	v, ok := mnger.UserDevs[p.UserId]
-	if ok {
-		v.Set(ids)
+	if !ok {
+		ctx.JSONWriteError(nil, c)
+		return
 	}
-	orm.DbUpdateColById(&model.SysUser{}, p.UserId, "deviceIds", v.Value())
+	v.Set(p.DeviceIds)
+	orm.DbUpdateColById(&model.SysUser{}, p.UserId, "deviceIds", v.DeviceIds)
 }
 
 // CancelAuthDevicesHandler 取消授权
@@ -231,12 +231,13 @@ func (o *User) CancelAuthDevicesHandler(c *gin.Context) {
 		ctx.JSONWriteError(err, c)
 		return
 	}
-	ids := util.StringToIntSlice(p.DeviceIds, ",")
 	v, ok := mnger.UserDevs[p.UserId]
-	if ok {
-		v.Dels(ids)
+	if !ok {
+		ctx.JSONWriteError(nil, c)
+		return
 	}
-	orm.DbUpdateColById(&model.SysUser{}, p.UserId, "deviceIds", v.Value())
+	v.Dels(p.DeviceIds)
+	orm.DbUpdateColById(&model.SysUser{}, p.UserId, "deviceIds", v.DeviceIds)
 }
 
 func UserRouters(r *gin.RouterGroup) {
