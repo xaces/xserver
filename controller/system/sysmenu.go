@@ -21,9 +21,9 @@ func (o *Menu) ListHandler(c *gin.Context) {
 		ctx.JSONWriteError(err, c)
 		return
 	}
-	var menus []model.SysMenu
-	total, _ := orm.DbPage(&model.SysMenu{}, param.Where()).Find(param.PageNum, param.PageSize, &menus)
-	ctx.JSONOk().Write(gin.H{"total": total, "data": menus}, c)
+	var data []model.SysMenu
+	total, _ := orm.DbByWhere(&model.SysMenu{}, param.Where()).Find(&data)
+	ctx.JSONOk().Write(gin.H{"total": total, "data": data}, c)
 }
 
 // GetHandler 查询详细

@@ -22,7 +22,7 @@ func (o *Dict) ListHandler(c *gin.Context) {
 		return
 	}
 	var data []model.SysDictData
-	total, _ := orm.DbPage(&model.SysDictData{}, param.Where()).Find(param.PageNum, param.PageSize, &data)
+	total, _ := orm.DbByWhere(&model.SysDictData{}, param.Where()).Find(&data)
 	ctx.JSONOk().Write(gin.H{"total": total, "data": data}, c)
 }
 

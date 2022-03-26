@@ -23,7 +23,7 @@ func (o *Dept) PageHandler(c *gin.Context) {
 		return
 	}
 	var data []model.SysDept
-	total, _ := orm.DbPage(&model.SysDept{}, param.Where()).Find(param.PageNum, param.PageSize, &data)
+	total, _ := orm.DbByWhere(&model.SysDept{}, param.Where()).Find(&data)
 	ctx.JSONOk().Write(gin.H{"total": total, "data": data}, c)
 }
 

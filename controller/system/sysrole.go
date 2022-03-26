@@ -28,7 +28,7 @@ func (o *Role) PageHandler(c *gin.Context) {
 		where.Append("created_by like ?", tok.UserName) // 非管理员只能获取当前用户创建的的角色
 	}
 	var data []model.SysRole
-	total, _ := orm.DbPage(&model.SysRole{}, where).Find(param.PageNum, param.PageSize, &data)
+	total, _ := orm.DbByWhere(&model.SysRole{}, where).Find(&data)
 	ctx.JSONOk().Write(gin.H{"total": total, "data": data}, c)
 }
 

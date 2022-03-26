@@ -10,26 +10,18 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func ProxyHandler(api string) gin.HandlerFunc {
+func ProxyHandler(uri string) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		pos := strings.Index(c.Request.URL.Path, api)
-		if pos < 0 {
-			c.Next()
+		if strings.Contains(c.Request.URL.Path, "api/device/list") {
+			mnger.DevUserList(c)
 			return
 		}
-		org := mnger.Company(middleware.GetUserToken(c).OrganizeGuid)
-		if org == nil {
-			c.Next()
-			return
-		}
-		proxy := new(url.URL)
-		proxy.Host = org.SysStation.Host
-		proxy.Scheme = org.SysStation.Scheme
+		pos := strings.Index(c.Request.URL.Path, uri)
+		api := new(url.URL)
+		api.Host = middleware.GetUserToken(c).Host
+		api.Scheme = c.Request.URL.Scheme
 		c.Request.URL.Path = c.Request.URL.Path[pos:]
-		if c.Request.URL.Path == "/station/api/device/list" {
-			proxy.RawQuery = "organizeGuid=" + org.OrganizeGuid
-		}
-		httputil.NewSingleHostReverseProxy(proxy).ServeHTTP(c.Writer, c.Request)
+		httputil.NewSingleHostReverseProxy(api).ServeHTTP(c.Writer, c.Request)
 		c.Abort()
 	}
 }

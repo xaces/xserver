@@ -17,13 +17,13 @@ type Station struct {
 
 // ListHandler 列表
 func (o *Station) ListHandler(c *gin.Context) {
-	var param service.BasePage
-	if err := c.ShouldBind(&param); err != nil {
+	var p orm.DbPage
+	if err := c.ShouldBind(&p); err != nil {
 		ctx.JSONWriteError(err, c)
 		return
 	}
 	var data []model.SysStation
-	totalCount, _ := orm.DbPage(&model.SysStation{}, param.Where()).Find(param.PageNum, param.PageSize, &data)
+	totalCount, _ := orm.DbByWhere(&model.SysStation{}, p.DbWhere()).Find(&data)
 	ctx.JSONOk().Write(gin.H{"total": totalCount, "data": data}, c)
 }
 

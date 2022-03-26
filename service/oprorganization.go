@@ -13,12 +13,50 @@ func OprPrimaryOrganization(guid string) (model.OprOrganization, error) {
 	return data, err
 }
 
-func OprOrganizationTree(data []model.OprOrganization) (tree []model.OprOrganization) {
+type OprVehicle struct {
+	Id         uint64 `json:"deviceId"`
+	DeviceNo   string `json:"deviceNo"`
+	DeviceName string `json:"deviceName"`
+	ChlsCount  int    `json:"chlsCount"`
+	ChlsName   string `json:"chlsName"`
+	OrganizeId uint64 `json:"organizeId"` // 分组Id
+}
+
+type OprOrgainze struct {
+	Id       uint64        `json:"id"`   //
+	Name     string        `json:"name"` // 名称
+	ParentId uint64        `json:"parentId"`
+	Vehicles []OprVehicle  `json:"vehis,omitempty" gorm:"-"`
+	Children []OprOrgainze `json:"children,omitempty" gorm:"-"`
+}
+
+func (o *OprOrgainze) filterChildren(data []OprOrgainze, vehis []OprVehicle) {
+	nid := o.Id
+	if o.ParentId == 0 {
+		nid = 0
+	}
+	for _, v := range vehis {
+		if nid == v.OrganizeId {
+			o.Vehicles = append(o.Vehicles, v)
+		}
+	}
+	for _, v := range data {
+		if v.ParentId != o.Id {
+			continue
+		}
+		v.filterChildren(data, vehis)
+		o.Children = append(o.Children, v)
+	}
+}
+
+func OprOrganizeTree(guid string, vehis []OprVehicle) (tree []OprOrgainze) {
+	var data []OprOrgainze
+	orm.DB().Model(&model.OprOrganization{}).Find(&data, "organize_guid = ?", guid)
 	for _, v := range data {
 		if v.ParentId != 0 {
 			continue
 		}
-		v.FilterChildren(data)
+		v.filterChildren(data, vehis)
 		tree = append(tree, v)
 	}
 	return

@@ -18,15 +18,15 @@ type Company struct {
 
 // ListHandler 列表
 func (o *Company) ListHandler(c *gin.Context) {
-	var param service.BasePage
-	if err := c.ShouldBind(&param); err != nil {
+	var p orm.DbPage
+	if err := c.ShouldBind(&p); err != nil {
 		ctx.JSONWriteError(err, c)
 		return
 	}
-	where := param.Where()
+	where := p.DbWhere()
 	where.Append("parent_id = ?", 0) // 上级节点为0，表示公司
 	var data []model.OprOrganization
-	toatl, _ := orm.DbPage(&model.OprOrganization{}, where).Preload("SysStation").Find(param.PageNum, param.PageSize, &data)
+	toatl, _ := orm.DbByWhere(&model.OprOrganization{}, where).Preload("SysStation").Find(&data)
 	ctx.JSONOk().Write(gin.H{"total": toatl, "data": data}, c)
 }
 

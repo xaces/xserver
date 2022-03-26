@@ -17,13 +17,13 @@ type File struct {
 
 // ListHandler 列表
 func (o *File) ListHandler(c *gin.Context) {
-	var param service.BasePage
-	if err := c.ShouldBind(&param); err != nil {
+	var p orm.DbPage
+	if err := c.ShouldBind(&p); err != nil {
 		ctx.JSONWriteError(err, c)
 		return
 	}
 	var data []model.SysFile
-	total, _ := orm.DbPage(&model.SysFile{}, param.Where()).Find(param.PageNum, param.PageSize, &data)
+	total, _ := orm.DbByWhere(&model.SysFile{}, p.DbWhere()).Find(&data)
 	ctx.JSONOk().Write(gin.H{"total": total, "data": data}, c)
 }
 

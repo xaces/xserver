@@ -4,7 +4,7 @@ import "github.com/wlgd/xutils/orm"
 
 // DeptPage 查询页
 type DeptPage struct {
-	BasePage
+	orm.DbPage
 	DeptName string `form:"deptName"` // 部门名称
 }
 

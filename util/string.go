@@ -7,15 +7,15 @@ import (
 	"strings"
 )
 
-func StringToIntSlice(str, sep string) []int {
+func StringToIntSlice(str, sep string) []uint64 {
 	strv := strings.Split(str, sep)
-	var intv []int
+	var intv []uint64
 	for _, v := range strv {
 		if v == "" {
 			continue
 		}
 		val, _ := strconv.Atoi(v)
-		intv = append(intv, val)
+		intv = append(intv, uint64(val))
 	}
 	return intv
 }

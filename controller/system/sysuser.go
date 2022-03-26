@@ -2,9 +2,11 @@ package system
 
 import (
 	"errors"
+	"xserver/entity/mnger"
 	"xserver/middleware"
 	"xserver/model"
 	"xserver/service"
+	"xserver/util"
 
 	"github.com/wlgd/xutils/ctx"
 	"github.com/wlgd/xutils/orm"
@@ -33,7 +35,7 @@ func (o *User) PageHandler(c *gin.Context) {
 		where.String("created_by like ?", tok.UserName) // 非管理员用户只能查看自己创建的用户
 	}
 	var data []model.SysUser
-	total, _ := orm.DbPage(&model.SysUser{}, where).Find(param.Page, param.Limit, &data)
+	total, _ := orm.DbByWhere(&model.SysUser{}, where).Find(&data)
 	ctx.JSONOk().Write(gin.H{"data": data, "total": total}, c)
 }
 
@@ -202,6 +204,41 @@ func (o *User) DeleteHandler(c *gin.Context) {
 	service.Deletes(&model.SysUser{}, c)
 }
 
+type authDevice struct {
+	UserId    uint64 `form:"userId"`
+	DeviceIds string `json:"deviceIds"`
+}
+
+// AuthDevicesHandler 授权
+func (o *User) AuthDevicesHandler(c *gin.Context) {
+	var p authDevice
+	if err := c.ShouldBind(&p); err != nil {
+		ctx.JSONWriteError(err, c)
+		return
+	}
+	ids := util.StringToIntSlice(p.DeviceIds, ",")
+	v, ok := mnger.UserDevs[p.UserId]
+	if ok {
+		v.Set(ids)
+	}
+	orm.DbUpdateColById(&model.SysUser{}, p.UserId, "deviceIds", v.Value())
+}
+
+// CancelAuthDevicesHandler 取消授权
+func (o *User) CancelAuthDevicesHandler(c *gin.Context) {
+	var p authDevice
+	if err := c.ShouldBind(&p); err != nil {
+		ctx.JSONWriteError(err, c)
+		return
+	}
+	ids := util.StringToIntSlice(p.DeviceIds, ",")
+	v, ok := mnger.UserDevs[p.UserId]
+	if ok {
+		v.Dels(ids)
+	}
+	orm.DbUpdateColById(&model.SysUser{}, p.UserId, "deviceIds", v.Value())
+}
+
 func UserRouters(r *gin.RouterGroup) {
 	sysUser := User{}
 	r.GET("/user/list", sysUser.PageHandler)
@@ -215,6 +252,8 @@ func UserRouters(r *gin.RouterGroup) {
 	r.PUT("/user/enable", sysUser.EnableHandler)
 	r.GET("/user/profile", sysUser.ProfileHandler)
 	r.PUT("/user/profile", sysUser.UpdateHandler)
+	r.PUT("/user/authDevices", sysUser.AuthDevicesHandler)
+	r.PUT("/user/cancelAuthDevices", sysUser.CancelAuthDevicesHandler)
 	r.PUT("/user/profile/updatePwd", sysUser.UpdatePwdHandler)
 	r.POST("/user/profile/avatar", sysUser.ProfileAuatarHandler)
 }

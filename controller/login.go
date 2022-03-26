@@ -4,6 +4,7 @@ import (
 	"errors"
 	"net/http"
 	"strings"
+	"xserver/entity/mnger"
 	"xserver/middleware"
 	"xserver/model"
 	"xserver/service"
@@ -64,12 +65,21 @@ func LoginHandler(c *gin.Context) {
 		ctx.JSONWriteError(errLogin, c)
 		return
 	}
+	// 加载设备
+	if _, ok := mnger.UserDevs[user.Id]; !ok {
+		mnger.NewDevUser(user.Id, user.DeviceIds)
+	}
 	tokenNext(c, user)
 }
 
 // 登录以后签发jwt
 func tokenNext(c *gin.Context, u *model.SysUser) {
-	// 从缓存中获取主账号对应工作站信息
+	// 获取主账号站点地址
+	if o, err := service.OprPrimaryOrganization(u.OrganizeGuid); err == nil {
+		u.Host = o.SysStation.Host
+	} else {
+		u.Host = "127.0.0.1:12100"
+	}
 	token, err := middleware.GenerateToken(u.SysUserToken)
 	if err != nil {
 		ctx.JSONWriteError(err, c)

@@ -13,10 +13,9 @@ type OprOrganizationOpt struct {
 
 type OprOrganization struct {
 	OprOrganizationOpt
-	OrganizeGuid string            `json:"organizeGuid"`
-	CreatedAt    jtime             `json:"createTime" gorm:"column:created_time;"`
-	CreatedBy    string            `json:"createBy" gorm:"comment:创建者;"`
-	Children     []OprOrganization `json:"children,omitempty" gorm:"-"`
+	OrganizeGuid string `json:"organizeGuid"`
+	CreatedAt    jtime  `json:"createTime" gorm:"column:created_time;"`
+	CreatedBy    string `json:"createBy" gorm:"comment:创建者;"`
 }
 
 // 第一级组织默认为公司
@@ -25,14 +24,4 @@ type OprOrganization struct {
 
 func (o *OprOrganization) TableName() string {
 	return "t_oprorganization"
-}
-
-func (o *OprOrganization) FilterChildren(data []OprOrganization) {
-	for _, v := range data {
-		if v.ParentId != o.Id {
-			continue
-		}
-		v.FilterChildren(data)
-		o.Children = append(o.Children, v)
-	}
 }

@@ -8,7 +8,7 @@ import (
 
 // PostPage 查询页
 type PostPage struct {
-	BasePage
+	orm.DbPage
 	PostName string `form:"postName"` //
 	PostCode string `form:"postCode"` //
 	Status   string `form:"status"`

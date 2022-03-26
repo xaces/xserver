@@ -1,6 +1,7 @@
 package operation
 
 import (
+	"xserver/entity/mnger"
 	"xserver/middleware"
 	"xserver/model"
 	"xserver/service"
@@ -26,10 +27,8 @@ func (o *Fleet) ListHandler(c *gin.Context) {
 // LisTreeHandler 列表
 func (o *Fleet) LisTreeHandler(c *gin.Context) {
 	tok := middleware.GetUserToken(c)
-	var data []model.OprOrganization
-	toatl, _ := orm.DbFindBy(&data, "organize_guid = ?", tok.OrganizeGuid)
-	t := service.OprOrganizationTree(data)
-	ctx.JSONOk().Write(gin.H{"total": toatl, "data": t}, c)
+	data := service.OprOrganizeTree(tok.OrganizeGuid, nil)
+	ctx.JSONOk().WriteData(data, c)
 }
 
 // GetHandler 详细
@@ -75,6 +74,31 @@ func (o *Fleet) DeleteHandler(c *gin.Context) {
 	service.Deletes(&model.OprOrganization{}, c)
 }
 
+// VehicleLisTreeHandler 列表
+func (o *Fleet) VehicleLisTreeHandler(c *gin.Context) {
+	tok := middleware.GetUserToken(c)
+	var res []service.OprVehicle
+	if err := mnger.GetUserDevice(tok, &res); err != nil {
+		ctx.JSONWriteError(err, c)
+		return
+	}
+	// 过滤用户数据
+	du, ok := mnger.UserDevs[tok.Id]
+	if !ok {
+		ctx.JSONOk().WriteTo(c)
+		return
+	}
+	var data []service.OprVehicle
+	for _, v := range res {
+		if !du.Include(v.Id) {
+			continue
+		}
+		data = append(data, v)
+	}
+	tree := service.OprOrganizeTree(tok.OrganizeGuid, data)
+	ctx.JSONOk().WriteData(tree, c)
+}
+
 func FleetRouters(r *gin.RouterGroup) {
 	o := Fleet{}
 	r.GET("/fleet/list", o.ListHandler)
@@ -83,4 +107,5 @@ func FleetRouters(r *gin.RouterGroup) {
 	r.POST("/fleet", o.AddHandler)
 	r.PUT("/fleet", o.UpdateHandler)
 	r.DELETE("/fleet/:id", o.DeleteHandler)
+	r.GET("/fleet/vehicle/listree", o.VehicleLisTreeHandler)
 }

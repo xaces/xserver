@@ -8,17 +8,6 @@ import (
 	"github.com/wlgd/xutils/orm"
 )
 
-type BasePage struct {
-	PageNum  int `form:"pageNum"`  // 当前页码
-	PageSize int `form:"pageSize"` // 每页数
-}
-
-// Where 初始化
-func (s *BasePage) Where() *orm.DbWhere {
-	var where orm.DbWhere
-	return &where
-}
-
 func Deletes(v interface{}, c *gin.Context) {
 	idstr := ctx.ParamString(c, "id")
 	if idstr == "" {

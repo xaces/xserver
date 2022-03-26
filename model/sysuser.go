@@ -20,9 +20,9 @@ type SysUserToken struct {
 	UserName     string   `json:"username" gorm:"not null;comment:登录账号;"`
 	RoleId       uint64   `json:"roleId"`
 	DeptId       JUint64s `json:"deptIds"`
-	DeviceIds    JUint64s `json:"deviceIds"`
 	OrganizeGuid string   `json:"organizeGuid"`
 	OrganizeName string   `json:"organizeName"`
+	Host         string   `json:"host" gorm:"-"`
 }
 
 // SysUserOpt
@@ -30,6 +30,7 @@ type SysUserOpt struct {
 	SysUserToken
 	NickName  string   `json:"nickname" gorm:"not null;comment:用户昵称;"`
 	UserType  int      `json:"userType"`
+	DeviceIds JUint64s `json:"deviceIds"` // 10w个
 	Email     string   `json:"email" gorm:"comment:用户邮箱;"`
 	Phone     string   `json:"phone" gorm:"size:11;default:'';comment:手机号码;"`
 	Sex       string   `json:"sex" gorm:"size:1;default:'0';comment:用户性别(1男 2女 0未知);"`

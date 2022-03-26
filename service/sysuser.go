@@ -15,19 +15,17 @@ const (
 
 // UserPage 查询页
 type UserPage struct {
-	BasePage
-	Page    int    `form:"page"`  // 每页数
-	Limit   int    `form:"limit"` // 当前页码
+	orm.DbPage
 	KeyWord string `form:"keyWord"`
 }
 
 // Where 初始化
 func (s *UserPage) Where() *orm.DbWhere {
-	var where orm.DbWhere
+	where := s.DbWhere()
 	if s.KeyWord != "" {
 		where.Append("user_name like ? or nick_name like ?", s.KeyWord, s.KeyWord)
 	}
-	return &where
+	return where
 }
 
 // SysUserPassword 生成密码
