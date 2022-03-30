@@ -109,6 +109,10 @@ func (o *User) ProfileHandler(c *gin.Context) {
 		ctx.JSONWriteError(err, c)
 		return
 	}
+	// 加载设备
+	if _, ok := mnger.UserDevs[data.Id]; !ok {
+		mnger.NewDevUser(data.Id, data.DeviceIds)
+	}
 	ctx.JSONOk().WriteData(data, c)
 }
 
@@ -240,21 +244,86 @@ func (o *User) CancelAuthDevicesHandler(c *gin.Context) {
 	orm.DbUpdateColById(&model.SysUser{}, p.UserId, "deviceIds", v.DeviceIds)
 }
 
+// DeviceLiveTreeHandler 实时设备树
+func (o *User) DeviceLiveTreeHandler(c *gin.Context) {
+	t := middleware.GetUserToken(c)
+	res := service.SysUserDevice(t)
+	// 过滤用户数据
+	u, ok := mnger.UserDevs[t.Id]
+	if !ok || res == nil {
+		ctx.JSONOk().WriteTo(c)
+		return
+	}
+	if u.DeviceIds == "*" {
+		tree := service.OprOrganizeTree(t.OrganizeGuid, res)
+		ctx.JSONOk().WriteData(tree, c)
+		return
+	}
+	var data []service.Vehicle
+	for _, v := range res {
+		if !u.Include(v.Id) {
+			continue
+		}
+		data = append(data, v)
+	}
+	tree := service.OprOrganizeTree(t.OrganizeGuid, data)
+	ctx.JSONOk().WriteData(tree, c)
+}
+
+type devicelist struct {
+	UserId uint64 `json:"userId"`
+	Permis bool   `json:"permis"`
+}
+
+// DevicesHandler 用户设
+func (o *User) DevicesHandler(c *gin.Context) {
+	var p devicelist
+	if err := c.ShouldBind(&p); err != nil {
+		ctx.JSONWriteError(err, c)
+		return
+	}
+	t := middleware.GetUserToken(c)
+	res := service.SysUserDevice(t)
+	// 过滤用户数据
+	u, ok := mnger.UserDevs[p.UserId]
+	if !ok || res == nil {
+		ctx.JSONOk().WriteTo(c)
+		return
+	}
+	if u.DeviceIds == "*" {
+		tree := service.OprOrganizeTree(t.OrganizeGuid, res)
+		ctx.JSONOk().WriteData(tree, c)
+		return
+	}
+	var data []service.Vehicle
+	for _, v := range res {
+		if p.Permis && !u.Include(v.Id) {
+			continue
+		} else if !p.Permis && u.Include(v.Id) {
+			continue
+		}
+		data = append(data, v)
+	}
+	ctx.JSONOk().WriteData(data, c)
+}
+
 func UserRouters(r *gin.RouterGroup) {
-	sysUser := User{}
-	r.GET("/user/list", sysUser.PageHandler)
-	r.GET("/user/:id", sysUser.GetHandler)
-	r.GET("/user/getRoles", sysUser.GetRolesHandler)
-	r.POST("/user", sysUser.AddHandler)
-	r.GET("/user/export", sysUser.ExportHandler)
-	r.PUT("/user", sysUser.UpdateHandler)
-	r.PUT("/user/resetPwd/:id", sysUser.ResetPwdHandler)
-	r.DELETE("/user/:id", sysUser.DeleteHandler)
-	r.PUT("/user/enable", sysUser.EnableHandler)
-	r.GET("/user/profile", sysUser.ProfileHandler)
-	r.PUT("/user/profile", sysUser.UpdateHandler)
-	r.PUT("/user/authDevices", sysUser.AuthDevicesHandler)
-	r.PUT("/user/cancelAuthDevices", sysUser.CancelAuthDevicesHandler)
-	r.PUT("/user/profile/updatePwd", sysUser.UpdatePwdHandler)
-	r.POST("/user/profile/avatar", sysUser.ProfileAuatarHandler)
+	o := User{}
+	r.GET("/user/list", o.PageHandler)
+	r.GET("/user/:id", o.GetHandler)
+	r.GET("/user/getRoles", o.GetRolesHandler)
+	r.POST("/user", o.AddHandler)
+	r.GET("/user/export", o.ExportHandler)
+	r.PUT("/user", o.UpdateHandler)
+	r.PUT("/user/resetPwd/:id", o.ResetPwdHandler)
+	r.DELETE("/user/:id", o.DeleteHandler)
+	r.PUT("/user/enable", o.EnableHandler)
+	r.GET("/user/profile", o.ProfileHandler)
+	r.PUT("/user/profile", o.UpdateHandler)
+	r.PUT("/user/profile/updatePwd", o.UpdatePwdHandler)
+	r.POST("/user/profile/avatar", o.ProfileAuatarHandler)
+	r.PUT("/user/authDevices", o.AuthDevicesHandler)
+	r.PUT("/user/cancelAuthDevices", o.CancelAuthDevicesHandler)
+	r.GET("/user/devices/liveTree", o.DeviceLiveTreeHandler)
+	r.GET("/user/devices", o.DevicesHandler)
 }

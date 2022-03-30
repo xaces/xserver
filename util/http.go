@@ -4,7 +4,10 @@ import (
 	"errors"
 	"io/ioutil"
 	"net/http"
+	"net/http/httputil"
+	"net/url"
 
+	"github.com/gin-gonic/gin"
 	jsoniter "github.com/json-iterator/go"
 )
 
@@ -32,8 +35,13 @@ func HttpGet(url string, result interface{}) error {
 	if res.Code != 200 {
 		return errors.New(res.Msg)
 	}
-	if result != nil {
+	if res.Data != nil && result != nil {
 		jsoniter.Get(content, "data").ToVal(result)
 	}
 	return nil
+}
+
+func SingleHostProxy(api *url.URL, path string, c *gin.Context) {
+	c.Request.URL.Path = path
+	httputil.NewSingleHostReverseProxy(api).ServeHTTP(c.Writer, c.Request)
 }

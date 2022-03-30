@@ -1,10 +1,11 @@
 package operation
 
 import (
-	"xserver/entity/mnger"
+	"net/url"
 	"xserver/middleware"
 	"xserver/model"
 	"xserver/service"
+	"xserver/util"
 
 	"github.com/wlgd/xutils/ctx"
 	"github.com/wlgd/xutils/orm"
@@ -74,34 +75,15 @@ func (o *Fleet) DeleteHandler(c *gin.Context) {
 	service.Deletes(&model.OprOrganization{}, c)
 }
 
-// VehicleLisTreeHandler 列表
-func (o *Fleet) VehicleLisTreeHandler(c *gin.Context) {
-	tok := middleware.GetUserToken(c)
-	var res []service.OprVehicle
-	if err := mnger.GetUserDevice(tok, &res); err != nil {
-		ctx.JSONWriteError(err, c)
-		return
+// DevicesHandler 列表
+func (o *Fleet) DevicesHandler(c *gin.Context) {
+	t := middleware.GetUserToken(c)
+	api := &url.URL{
+		Scheme:   t.Scheme,
+		Host:     t.Host,
+		RawQuery: "organizeGuid=" + t.OrganizeGuid,
 	}
-	// 过滤用户数据
-	u, ok := mnger.UserDevs[tok.Id]
-	if !ok {
-		ctx.JSONOk().WriteTo(c)
-		return
-	}
-	if u.DeviceIds == "*" {
-		tree := service.OprOrganizeTree(tok.OrganizeGuid, res)
-		ctx.JSONOk().WriteData(tree, c)
-		return
-	}
-	var data []service.OprVehicle
-	for _, v := range res {
-		if !u.Include(v.Id) {
-			continue
-		}
-		data = append(data, v)
-	}
-	tree := service.OprOrganizeTree(tok.OrganizeGuid, data)
-	ctx.JSONOk().WriteData(tree, c)
+	util.SingleHostProxy(api, "/station/api/device/list", c)
 }
 
 func FleetRouters(r *gin.RouterGroup) {
@@ -112,5 +94,5 @@ func FleetRouters(r *gin.RouterGroup) {
 	r.POST("/fleet", o.AddHandler)
 	r.PUT("/fleet", o.UpdateHandler)
 	r.DELETE("/fleet/:id", o.DeleteHandler)
-	r.GET("/fleet/vehicle/listree", o.VehicleLisTreeHandler)
+	r.GET("/fleet/devices", o.DevicesHandler)
 }

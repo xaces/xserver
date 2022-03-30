@@ -2,6 +2,7 @@ package service
 
 import (
 	"errors"
+	"fmt"
 	"xserver/model"
 	"xserver/pkg/gmd5"
 	"xserver/util"
@@ -12,6 +13,16 @@ import (
 const (
 	defaultpwd = "123456"
 )
+
+type Vehicle struct {
+	Id           int    `json:"deviceId"`
+	DeviceNo     string `json:"deviceNo"`
+	DeviceName   string `json:"deviceName"`
+	ChlCount     int    `json:"chlCount"`
+	ChlNames     string `json:"chlNames"`
+	OrganizeId   int    `json:"organizeId"`   // 分组Id
+	OrganizeGuid string `json:"organizeGuid"` // 分组Id
+}
 
 // UserPage 查询页
 type UserPage struct {
@@ -59,4 +70,12 @@ func SysUserCreate(u *model.SysUser) error {
 	}
 	u.Password = SysUserPassword(u, u.Password)
 	return orm.DbCreate(u)
+}
+
+func SysUserDevice(t *model.SysUserToken) []Vehicle {
+	var res []Vehicle
+	if err := util.HttpGet(fmt.Sprintf("%s://%s/station/api/device/list?organizeGuid=%s", t.Scheme, t.Host, t.OrganizeGuid), &res); err != nil {
+		return nil
+	}
+	return res
 }

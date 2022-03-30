@@ -23,6 +23,7 @@ type SysUserToken struct {
 	OrganizeGuid string   `json:"organizeGuid"`
 	OrganizeName string   `json:"organizeName"`
 	Host         string   `json:"host" gorm:"-"`
+	Scheme       string   `json:"scheme" gorm:"-"`
 }
 
 // SysUserOpt
