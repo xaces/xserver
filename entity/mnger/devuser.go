@@ -1,12 +1,13 @@
 package mnger
 
 import (
-	"strconv"
 	"xserver/util"
+
+	"github.com/wlgd/xutils"
 )
 
 type devUser struct {
-	Val       map[int]string
+	Val       *xutils.BitMap
 	DeviceIds string
 }
 
@@ -14,7 +15,7 @@ var UserDevs map[uint64]*devUser = make(map[uint64]*devUser)
 
 func NewDevUser(userId uint64, idstr string) {
 	u := &devUser{
-		Val:       make(map[int]string),
+		Val:       xutils.DefaultBitMap,
 		DeviceIds: idstr,
 	}
 	u.Set(idstr)
@@ -28,7 +29,7 @@ func (d *devUser) Set(idstr string) {
 	}
 	ids := util.StringToIntSlice(idstr, ",")
 	for _, v := range ids {
-		d.Val[v] = ""
+		d.Val.Set(v)
 	}
 	if d.DeviceIds != "" {
 		d.DeviceIds += ","
@@ -38,28 +39,20 @@ func (d *devUser) Set(idstr string) {
 
 func (d *devUser) Dels(idstr string) {
 	if idstr == "*" {
-		for k := range d.Val {
-			delete(d.Val, k)
-		}
+		d.Val.Clear()
 		d.DeviceIds = ""
 		return
 	}
 	ids := util.StringToIntSlice(idstr, ",")
 	for _, v := range ids {
-		delete(d.Val, v)
+		d.Val.Del(v)
 	}
-	var s string
-	for k := range d.Val {
-		s += strconv.Itoa(int(k))
-		s += ","
-	}
-	if s != "" {
-		s = s[:len(s)-1]
-	}
-	d.DeviceIds = s
+	d.DeviceIds = d.Val.String()
 }
 
 func (d *devUser) Include(id int) bool {
-	_, ok := d.Val[id]
-	return ok
+	if d.DeviceIds == "*" {
+		return true
+	}
+	return d.Val.Include(id)
 }
