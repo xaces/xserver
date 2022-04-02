@@ -13,13 +13,17 @@ type devUser struct {
 
 var UserDevs map[uint64]*devUser = make(map[uint64]*devUser)
 
-func NewDevUser(userId uint64, idstr string) {
+func NewDevUser(userId uint64, idstr string) *devUser{
+	if v, ok := UserDevs[userId]; ok {
+		return v
+	}
 	u := &devUser{
-		Val:       xutils.DefaultBitMap,
+		Val:       xutils.NewBitMap(64),
 		DeviceIds: idstr,
 	}
 	u.Set(idstr)
 	UserDevs[userId] = u
+	return u
 }
 
 func (d *devUser) Set(idstr string) {
@@ -37,6 +41,14 @@ func (d *devUser) Set(idstr string) {
 	d.DeviceIds += idstr
 }
 
+// 只更新bitmap
+func (d *devUser) Update(id int) {
+	if d.Val.Include(id) {
+		return
+	}
+	d.Val.Set(id)
+}
+
 func (d *devUser) Dels(idstr string) {
 	if idstr == "*" {
 		d.Val.Clear()
@@ -51,8 +63,5 @@ func (d *devUser) Dels(idstr string) {
 }
 
 func (d *devUser) Include(id int) bool {
-	if d.DeviceIds == "*" {
-		return true
-	}
 	return d.Val.Include(id)
 }

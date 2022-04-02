@@ -109,10 +109,8 @@ func (o *User) ProfileHandler(c *gin.Context) {
 		ctx.JSONWriteError(err, c)
 		return
 	}
-	// 加载设备
-	if _, ok := mnger.UserDevs[data.Id]; !ok {
-		mnger.NewDevUser(data.Id, data.DeviceIds)
-	}
+	u := mnger.NewDevUser(data.Id, data.DeviceIds)
+	u.Val.Clear()
 	ctx.JSONOk().WriteData(data, c)
 }
 
@@ -254,14 +252,11 @@ func (o *User) DeviceLiveTreeHandler(c *gin.Context) {
 		ctx.JSONOk().WriteTo(c)
 		return
 	}
-	if u.DeviceIds == "*" {
-		tree := service.OprOrganizeTree(t.OrganizeGuid, res)
-		ctx.JSONOk().WriteData(tree, c)
-		return
-	}
 	var data []service.Vehicle
 	for _, v := range res {
-		if !u.Include(v.Id) {
+		if u.DeviceIds == "*" {
+			u.Update(v.Id)
+		} else if !u.Include(v.Id) {
 			continue
 		}
 		data = append(data, v)

@@ -4,6 +4,7 @@ import (
 	"xserver/app/db"
 	"xserver/app/router"
 	"xserver/configs"
+	"xserver/entity/nats"
 )
 
 func Run() error {
@@ -11,6 +12,7 @@ func Run() error {
 		return err
 	}
 	router.Run(&configs.Default.Http)
+	nats.Default.Run("")
 	return nil
 }
 

@@ -38,6 +38,7 @@ func initRouter(o *Option) *gin.Engine {
 	root.GET("/captcha", controller.CaptchaHandler)
 	root.POST("/login", controller.LoginHandler)
 	root.POST("/logout", controller.LogoutHandler)
+	root.GET("/ws", controller.WsHandler)
 	jwt := root.Group("")
 	jwt.Use(middleware.JWTAuth())
 	jwt.Any("/station/*api", controller.ProxyHandler("/station/api"))
