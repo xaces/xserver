@@ -19,21 +19,21 @@ type Station struct {
 // ListHandler 列表
 func (o *Station) ListHandler(c *gin.Context) {
 	tok := middleware.GetUserToken(c)
-	var data []model.SysStation
+	var data []model.SysTation
 	toatl, _ := orm.DbFindBy(&data, "organize_guid = ?", tok.OrganizeGuid)
 	ctx.JSONOk().Write(gin.H{"total": toatl, "data": data}, c)
 }
 
 // GetHandler 详细
 func (o *Station) GetHandler(c *gin.Context) {
-	var data model.SysStation
+	var data model.SysTation
 	service.QueryById(&data, c)
 }
 
 // AddHandler 新增
 func (o *Station) AddHandler(c *gin.Context) {
-	var p model.SysStation
-	if err := c.ShouldBind(&p.SysStationOpt); err != nil {
+	var p model.SysTation
+	if err := c.ShouldBind(&p.SysTationOpt); err != nil {
 		ctx.JSONWriteError(err, c)
 		return
 	}
@@ -49,8 +49,8 @@ func (o *Station) AddHandler(c *gin.Context) {
 
 // UpdateHandler 修改
 func (o *Station) UpdateHandler(c *gin.Context) {
-	var p model.SysStation
-	if err := c.ShouldBind(&p.SysStationOpt); err != nil {
+	var p model.SysTation
+	if err := c.ShouldBind(&p.SysTationOpt); err != nil {
 		ctx.JSONWriteError(err, c)
 		return
 	}
@@ -63,7 +63,7 @@ func (o *Station) UpdateHandler(c *gin.Context) {
 
 // DeleteHandler 删除
 func (o *Station) DeleteHandler(c *gin.Context) {
-	service.Deletes(&model.SysStation{}, c)
+	service.Deletes(&model.SysTation{}, c)
 }
 
 func StationRouters(r *gin.RouterGroup) {

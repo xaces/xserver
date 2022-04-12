@@ -38,14 +38,15 @@ func (o *Vehicle) GetHandler(c *gin.Context) {
 
 // AddHandler 新增
 func (o *Vehicle) AddHandler(c *gin.Context) {
-	var data model.OprVehicle
+	var p model.OprVehicle
 	//获取参数
-	if err := c.ShouldBind(&data.OprVehicleOpt); err != nil {
+	if err := c.ShouldBind(&p.OprVehicleOpt); err != nil {
 		ctx.JSONWriteError(err, c)
 		return
 	}
-	data.Guid = util.UUID()
-	if err := orm.DbCreate(&data); err != nil {
+	p.Guid = util.UUID()
+	p.OrganizeGuid = middleware.GetUserToken(c).OrganizeGuid
+	if err := orm.DbCreate(&p); err != nil {
 		ctx.JSONWriteError(err, c)
 		return
 	}

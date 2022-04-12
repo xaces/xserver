@@ -1,6 +1,6 @@
 package model
 
-type SysStationOpt struct {
+type SysTationOpt struct {
 	Id           uint64 `json:"id" gorm:"primary_key"`
 	Name         string `json:"name"` // 名称
 	Scheme       string `json:"scheme"`
@@ -14,12 +14,12 @@ type SysStationOpt struct {
 	Logins       int    `json:"logins" gorm:"-;comment:当前在线数目;"` //
 }
 
-type SysStation struct {
-	SysStationOpt
+type SysTation struct {
+	SysTationOpt
 	Guid      string `json:"guid"`
 	CreatedAt jtime  `json:"createTime" gorm:"column:created_time;"`
 }
 
-func (o *SysStation) TableName() string {
+func (o *SysTation) TableName() string {
 	return "t_systation"
 }

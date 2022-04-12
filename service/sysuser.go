@@ -14,13 +14,13 @@ const (
 )
 
 type Vehicle struct {
-	Id           int    `json:"deviceId"`
-	DeviceNo     string `json:"deviceNo"`
-	DeviceName   string `json:"deviceName"`
-	ChlCount     int    `json:"chlCount"`
-	ChlNames     string `json:"chlNames"`
-	OrganizeId   int    `json:"organizeId"`   // 分组Id
-	OrganizeGuid string `json:"organizeGuid"` // 分组Id
+	Id          int    `json:"deviceId"`
+	DeviceNo    string `json:"deviceNo"`
+	DeviceName  string `json:"deviceName"`
+	ChlCount    int    `json:"chlCount"`
+	ChlNames    string `json:"chlNames"`
+	OrganizeId  int    `json:"organizeId"`  // 分组Id
+	StationGuid string `json:"stationGuid"` // 工作站guid
 }
 
 // UserPage 查询页
@@ -73,6 +73,6 @@ func SysUserCreate(u *model.SysUser) error {
 
 func SysUserDevice(t *model.SysUserToken) []Vehicle {
 	var res []Vehicle
-	orm.DB().Model(&model.OprVehicle{}).Where("organize_guid = ", t.OrganizeGuid).Scan(&res)
+	orm.DB().Model(&model.OprVehicle{}).Where("organize_guid = ?", t.OrganizeGuid).Scan(&res)
 	return res
 }
