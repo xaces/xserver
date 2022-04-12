@@ -1,11 +1,10 @@
 package operation
 
 import (
-	"net/url"
+	"errors"
 	"xserver/middleware"
 	"xserver/model"
 	"xserver/service"
-	"xserver/util"
 
 	"github.com/wlgd/xutils/ctx"
 	"github.com/wlgd/xutils/orm"
@@ -21,7 +20,7 @@ type Fleet struct {
 func (o *Fleet) ListHandler(c *gin.Context) {
 	tok := middleware.GetUserToken(c)
 	var data []model.OprOrganization
-	toatl, _ := orm.DbFindBy(&data, "organize_guid = ?", tok.OrganizeGuid)
+	toatl, _ := orm.DbFindBy(&data, "guid = ?", tok.OrganizeGuid)
 	ctx.JSONOk().Write(gin.H{"total": toatl, "data": data}, c)
 }
 
@@ -29,6 +28,10 @@ func (o *Fleet) ListHandler(c *gin.Context) {
 func (o *Fleet) LisTreeHandler(c *gin.Context) {
 	tok := middleware.GetUserToken(c)
 	data := service.OprOrganizeTree(tok.OrganizeGuid, nil)
+	if data == nil {
+		ctx.JSONWriteError(errors.New("no data"), c)
+		return
+	}
 	ctx.JSONOk().WriteData(data, c)
 }
 
@@ -47,7 +50,7 @@ func (o *Fleet) AddHandler(c *gin.Context) {
 		return
 	}
 	// 获取组织信息, 从数据库
-	data.OrganizeGuid = middleware.GetUserToken(c).OrganizeGuid
+	data.Guid = middleware.GetUserToken(c).OrganizeGuid
 	if err := orm.DbCreate(&data); err != nil {
 		ctx.JSONWriteError(err, c)
 		return
@@ -77,13 +80,6 @@ func (o *Fleet) DeleteHandler(c *gin.Context) {
 
 // DevicesHandler 列表
 func (o *Fleet) DevicesHandler(c *gin.Context) {
-	t := middleware.GetUserToken(c)
-	api := &url.URL{
-		Scheme:   t.Scheme,
-		Host:     t.Host,
-		RawQuery: "organizeGuid=" + t.OrganizeGuid,
-	}
-	util.SingleHostProxy(api, "/station/api/device/list", c)
 }
 
 func FleetRouters(r *gin.RouterGroup) {

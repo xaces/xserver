@@ -48,6 +48,7 @@ func LoginHandler(c *gin.Context) {
 	if err != nil {
 		if lo.Username == model.SysUserName {
 			user.Password = lo.Password
+			user.DeviceIds = "*"
 			err = service.SysUserCreate(user)
 		}
 	}
@@ -70,13 +71,6 @@ func LoginHandler(c *gin.Context) {
 // 登录以后签发jwt
 func tokenNext(c *gin.Context, u *model.SysUser) {
 	// 获取主账号站点地址
-	if o, err := service.OprPrimaryOrganization(u.OrganizeGuid); err == nil {
-		u.Host = o.SysStation.Host
-		u.Scheme = o.SysStation.Scheme
-	} else {
-		u.Host = "127.0.0.1:12100"
-		u.Scheme = "http"
-	}
 	token, err := middleware.GenerateToken(u.SysUserToken)
 	if err != nil {
 		ctx.JSONWriteError(err, c)

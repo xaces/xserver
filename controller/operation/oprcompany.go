@@ -25,8 +25,9 @@ func (o *Company) ListHandler(c *gin.Context) {
 	}
 	where := p.DbWhere()
 	where.Append("parent_id = ?", 0) // 上级节点为0，表示公司
+	where.Append("guid != ?", "")
 	var data []model.OprOrganization
-	toatl, _ := orm.DbByWhere(&model.OprOrganization{}, where).Preload("SysStation").Find(&data)
+	toatl, _ := orm.DbByWhere(&model.OprOrganization{}, where).Find(&data)
 	ctx.JSONOk().Write(gin.H{"total": toatl, "data": data}, c)
 }
 
@@ -44,14 +45,15 @@ func (o *Company) AddHandler(c *gin.Context) {
 		ctx.JSONWriteError(err, c)
 		return
 	}
-	data.OrganizeGuid = util.NUID()
+	data.Guid = util.NUID()
 	tok := middleware.GetUserToken(c)
 	u := &model.SysUser{}
 	u.UserName = data.UserName
 	u.CreatedBy = tok.UserName
 	u.OrganizeName = data.Name
 	u.UserType = model.SysUserTypeAdmin
-	u.OrganizeGuid = data.OrganizeGuid
+	u.OrganizeGuid = data.Guid
+	u.DeviceIds = "*"
 	if err := service.SysUserCreate(u); err != nil {
 		ctx.JSONWriteError(err, c)
 		return
@@ -60,23 +62,6 @@ func (o *Company) AddHandler(c *gin.Context) {
 		ctx.JSONWriteError(err, c)
 		return
 	}
-	ctx.JSONOk().WriteTo(c)
-}
-
-type companyConfig struct {
-	CompanyId uint64 `json:"companyId" binding:"required"`
-	StationId uint64 `json:"stationId"`
-}
-
-// AddHandler 新增
-func (o *Company) ConfigHandler(c *gin.Context) {
-	var param companyConfig
-	//获取参数
-	if err := c.ShouldBind(&param); err != nil {
-		ctx.JSONWriteError(err, c)
-		return
-	}
-	orm.DbUpdateColById(&model.OprOrganization{}, param.CompanyId, "station_id", param.StationId)
 	ctx.JSONOk().WriteTo(c)
 }
 
@@ -105,7 +90,6 @@ func CompanyRouters(r *gin.RouterGroup) {
 	r.GET("/company/list", o.ListHandler)
 	r.GET("/company/:id", o.GetHandler)
 	r.POST("/company", o.AddHandler)
-	r.PUT("/company/config", o.ConfigHandler)
 	r.PUT("/company", o.UpdateHandler)
 	r.DELETE("/company/:id", o.DeleteHandler)
 }

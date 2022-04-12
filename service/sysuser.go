@@ -2,7 +2,6 @@ package service
 
 import (
 	"errors"
-	"fmt"
 	"xserver/model"
 	"xserver/pkg/gmd5"
 	"xserver/util"
@@ -74,8 +73,6 @@ func SysUserCreate(u *model.SysUser) error {
 
 func SysUserDevice(t *model.SysUserToken) []Vehicle {
 	var res []Vehicle
-	if err := util.HttpGet(fmt.Sprintf("%s://%s/station/api/device/list?organizeGuid=%s", t.Scheme, t.Host, t.OrganizeGuid), &res); err != nil {
-		return nil
-	}
+	orm.DB().Model(&model.OprVehicle{}).Where("organize_guid = ", t.OrganizeGuid).Scan(&res)
 	return res
 }

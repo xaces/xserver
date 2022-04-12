@@ -20,10 +20,8 @@ type SysUserToken struct {
 	UserName     string   `json:"username" gorm:"not null;comment:登录账号;"`
 	RoleId       uint64   `json:"roleId"`
 	DeptId       JUint64s `json:"deptIds"`
-	OrganizeGuid string   `json:"organizeGuid"`
+	OrganizeGuid string   `json:"organizeGuid" gorm:"default:'';"`
 	OrganizeName string   `json:"organizeName"`
-	Host         string   `json:"host" gorm:"-"`
-	Scheme       string   `json:"scheme" gorm:"-"`
 }
 
 // SysUserOpt

@@ -6,4 +6,5 @@ func InitRouters(r *gin.RouterGroup) {
 	oper := r.Group("/operation")
 	CompanyRouters(oper)
 	FleetRouters(oper)
+	VehicleRouter(oper)
 }

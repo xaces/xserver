@@ -9,7 +9,7 @@ import (
 // 主组织
 func OprPrimaryOrganization(guid string) (model.OprOrganization, error) {
 	var data model.OprOrganization
-	err := orm.DB().Model(&data).Where("organize_guid = ? AND parent_id = 0", guid).Preload("SysStation").First(&data).Error
+	err := orm.DB().Model(&data).Where("guid = ? AND parent_id = 0", guid).First(&data).Error
 	return data, err
 }
 
@@ -46,7 +46,7 @@ func (o *OprOrgainze) filterChildren(data []OprOrgainze, vehis []Vehicle) {
 
 func OprOrganizeTree(guid string, vehis []Vehicle) (tree []OprOrgainze) {
 	var data []OprOrgainze
-	orm.DB().Model(&model.OprOrganization{}).Find(&data, "organize_guid = ?", guid)
+	orm.DB().Model(&model.OprOrganization{}).Find(&data, "guid = ?", guid)
 	for _, v := range data {
 		if v.ParentId != 0 {
 			continue
