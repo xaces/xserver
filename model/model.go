@@ -37,14 +37,14 @@ func (t *jtime) Scan(v interface{}) error {
 	return fmt.Errorf("can not convert %v to timestamp", v)
 }
 
-type JUint64s []uint64
+type JUints []uint
 
 // Value insert
-func (j JUint64s) Value() (driver.Value, error) {
+func (j JUints) Value() (driver.Value, error) {
 	return json.Marshal(&j)
 }
 
 // Scan valueof
-func (t *JUint64s) Scan(v interface{}) error {
+func (t *JUints) Scan(v interface{}) error {
 	return json.Unmarshal(v.([]byte), t)
 }

@@ -2,8 +2,8 @@ package model
 
 // SysDept
 type SysDeptOpt struct {
-	Id       uint64 `json:"deptId" gorm:"primary_key"`
-	ParentId uint64 `json:"parentId"`
+	Id       uint   `json:"deptId" gorm:"primary_key"`
+	ParentId uint   `json:"parentId"`
 	DeptName string `json:"deptName"`
 	Address  string `json:"address"`
 	Leader   string `json:"leader"`

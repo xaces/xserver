@@ -1,4 +1,4 @@
-package mnger
+package cache
 
 import (
 	"xserver/model"
@@ -16,7 +16,7 @@ var (
 	}
 )
 
-func SysTationGet(guid string) *model.SysTation {
+func SysTation(guid string) *model.SysTation {
 	if guid == "" {
 		return &defStation
 	}

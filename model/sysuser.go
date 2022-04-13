@@ -16,12 +16,12 @@ const (
 )
 
 type SysUserToken struct {
-	Id           uint64   `json:"userId" gorm:"primary_key"`
-	UserName     string   `json:"username" gorm:"not null;comment:登录账号;"`
-	RoleId       uint64   `json:"roleId"`
-	DeptId       JUint64s `json:"deptIds"`
-	OrganizeGuid string   `json:"organizeGuid" gorm:"default:'';"`
-	OrganizeName string   `json:"organizeName"`
+	Id           uint   `json:"userId" gorm:"primary_key"`
+	UserName     string `json:"username" gorm:"not null;comment:登录账号;"`
+	RoleId       uint   `json:"roleId"`
+	DeptId       JUints `json:"deptIds"`
+	OrganizeGuid string `json:"organizeGuid" gorm:"default:'';"`
+	OrganizeName string `json:"organizeName"`
 }
 
 // SysUserOpt

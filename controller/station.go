@@ -3,7 +3,7 @@ package controller
 import (
 	"net/url"
 	"strings"
-	"xserver/entity/mnger"
+	"xserver/entity/cache"
 	"xserver/util"
 
 	"github.com/gin-gonic/gin"
@@ -11,7 +11,7 @@ import (
 
 func ProxyHandler(uri string) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		s := mnger.SysTationGet(c.Query("stationGuid"))
+		s := cache.SysTation(c.Query("stationGuid"))
 		// TODO 不同设备向不同工作站请求
 		pos := strings.Index(c.Request.URL.Path, uri)
 		api := &url.URL{

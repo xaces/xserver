@@ -2,8 +2,8 @@ package model
 
 // SysMenuOpt
 type SysMenuOpt struct {
-	Id       uint64 `json:"id" gorm:"primary_key"`
-	ParentId uint64 `json:"parentId"`
+	Id       uint   `json:"id" gorm:"primary_key"`
+	ParentId uint   `json:"parentId"`
 	Title    string `json:"title" gorm:"size:50;not null;comment:菜单名称;"`
 	Type     string `json:"type" gorm:"size:1;default:'0';comment:;"`
 	OpenType string `json:"openType" gorm:"comment:菜单类型;"`

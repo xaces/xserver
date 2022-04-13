@@ -2,7 +2,7 @@ package system
 
 import (
 	"errors"
-	"xserver/entity/mnger"
+	"xserver/entity/cache"
 	"xserver/middleware"
 	"xserver/model"
 	"xserver/service"
@@ -109,7 +109,7 @@ func (o *User) ProfileHandler(c *gin.Context) {
 		ctx.JSONWriteError(err, c)
 		return
 	}
-	u := mnger.NewDevUser(data.Id, data.DeviceIds)
+	u := cache.NewDevUser(data.Id, data.DeviceIds)
 	u.Val.Clear()
 	ctx.JSONOk().WriteData(data, c)
 }
@@ -182,18 +182,14 @@ func (o *User) UpdateHandler(c *gin.Context) {
 
 // ResetPwdHandler 修改密码
 func (o *User) ResetPwdHandler(c *gin.Context) {
-	getId, err := ctx.ParamInt(c, "id")
-	if err != nil {
-		ctx.JSONWriteError(err, c)
-		return
-	}
+	id := ctx.ParamUInt(c, "id")
 	var data model.SysUser
-	if err := orm.DbFirstById(&data, getId); err != nil {
+	if err := orm.DbFirstById(&data, id); err != nil {
 		ctx.JSONWriteError(err, c)
 		return
 	}
 	newPassword := service.SysUserPassword(&data, defaultpwd)
-	if err := orm.DbUpdateColById(&data, getId, "password", newPassword); err != nil {
+	if err := orm.DbUpdateColById(&data, id, "password", newPassword); err != nil {
 		ctx.JSONWriteError(err, c)
 		return
 	}
@@ -206,7 +202,7 @@ func (o *User) DeleteHandler(c *gin.Context) {
 }
 
 type authDevice struct {
-	UserId    uint64 `form:"userId"`
+	UserId    uint   `form:"userId"`
 	DeviceIds string `json:"deviceIds"`
 }
 
@@ -217,8 +213,8 @@ func (o *User) AuthDevicesHandler(c *gin.Context) {
 		ctx.JSONWriteError(err, c)
 		return
 	}
-	v, ok := mnger.UserDevs[p.UserId]
-	if !ok {
+	v := cache.UserDevs(p.UserId)
+	if v == nil {
 		ctx.JSONWriteError(nil, c)
 		return
 	}
@@ -233,8 +229,8 @@ func (o *User) CancelAuthDevicesHandler(c *gin.Context) {
 		ctx.JSONWriteError(err, c)
 		return
 	}
-	v, ok := mnger.UserDevs[p.UserId]
-	if !ok {
+	v := cache.UserDevs(p.UserId)
+	if v == nil {
 		ctx.JSONWriteError(nil, c)
 		return
 	}
@@ -245,21 +241,19 @@ func (o *User) CancelAuthDevicesHandler(c *gin.Context) {
 // DeviceLiveTreeHandler 实时设备树
 func (o *User) DeviceLiveTreeHandler(c *gin.Context) {
 	t := middleware.GetUserToken(c)
-	res := service.SysUserDevice(t)
+	devs := service.SysUserDevice(t)
 	// 过滤用户数据
-	u, ok := mnger.UserDevs[t.Id]
-	if !ok || res == nil {
-		ctx.JSONOk().WriteTo(c)
-		return
-	}
 	var data []service.Vehicle
-	for _, v := range res {
-		if u.DeviceIds == "*" {
-			u.Update(v.Id)
-		} else if !u.Include(v.Id) {
-			continue
+	u := cache.UserDevs(t.Id)
+	if u != nil && devs != nil {
+		for _, v := range devs {
+			if u.DeviceIds == "*" {
+				u.Update(v.Id)
+			} else if !u.Include(v.Id) {
+				continue
+			}
+			data = append(data, v)
 		}
-		data = append(data, v)
 	}
 	tree := service.OprOrganizeTree(t.OrganizeGuid, data)
 	ctx.JSONOk().WriteData(tree, c)
@@ -270,7 +264,7 @@ type devicelist struct {
 	Permis bool   `json:"permis"`
 }
 
-// DevicesHandler 用户设
+// DevicesHandler 用户
 func (o *User) DevicesHandler(c *gin.Context) {
 	var p devicelist
 	if err := c.ShouldBind(&p); err != nil {
@@ -278,20 +272,20 @@ func (o *User) DevicesHandler(c *gin.Context) {
 		return
 	}
 	t := middleware.GetUserToken(c)
-	res := service.SysUserDevice(t)
+	devs := service.SysUserDevice(t)
 	// 过滤用户数据
-	u, ok := mnger.UserDevs[p.UserId]
-	if !ok || res == nil {
+	u := cache.UserDevs(t.Id)
+	if u == nil || devs == nil {
 		ctx.JSONOk().WriteTo(c)
 		return
 	}
 	if u.DeviceIds == "*" {
-		tree := service.OprOrganizeTree(t.OrganizeGuid, res)
+		tree := service.OprOrganizeTree(t.OrganizeGuid, devs)
 		ctx.JSONOk().WriteData(tree, c)
 		return
 	}
 	var data []service.Vehicle
-	for _, v := range res {
+	for _, v := range devs {
 		if p.Permis && !u.Include(v.Id) {
 			continue
 		} else if !p.Permis && u.Include(v.Id) {

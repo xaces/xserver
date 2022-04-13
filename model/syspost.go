@@ -2,7 +2,7 @@ package model
 
 // SysPostOpt 操作请求(获取/修改/更新)
 type SysPostOpt struct {
-	Id       uint64 `json:"postId" gorm:"primary_key"`
+	Id       uint   `json:"postId" gorm:"primary_key"`
 	PostName string `json:"postName" gorm:"not null;comment:岗位名称;"`
 	PostCode string `json:"postCode" gorm:"size:64;comment:岗位编码;"`
 	PostSort int    `json:"postSort" gorm:"not null;comment:岗位排序;"`

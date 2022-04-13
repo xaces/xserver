@@ -2,7 +2,7 @@ package model
 
 // SysNoticeOpt
 type SysNoticeOpt struct {
-	Id         uint64 `json:"id" gorm:"primary_key"`
+	Id         uint   `json:"id" gorm:"primary_key"`
 	Title      string `json:"title"`
 	Content    string `json:"content"`
 	Sender     string `json:"sender"`

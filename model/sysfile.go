@@ -1,7 +1,7 @@
 package model
 
 type SysFileOpt struct {
-	Id         uint64 `json:"fileId" gorm:"primary_key"`
+	Id         uint   `json:"fileId" gorm:"primary_key"`
 	FileName   string `json:"fileName"`
 	FilePath   string `json:"filePath"`
 	FileType   string `json:"fileType"`

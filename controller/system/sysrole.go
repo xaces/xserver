@@ -40,7 +40,7 @@ func (o *Role) GetHandler(c *gin.Context) {
 
 // GetRolePowerHandler 查询
 func (o *Role) GetRolePowerHandler(c *gin.Context) {
-	getId, err := ctx.QueryUInt64(c, "roleId")
+	getId, err := ctx.QueryUInt(c, "roleId")
 	if err != nil {
 		ctx.JSONWriteError(err, c)
 		return

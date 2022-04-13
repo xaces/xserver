@@ -8,7 +8,7 @@ import (
 	jsoniter "github.com/json-iterator/go"
 	"github.com/wlgd/xutils/ctx"
 
-	"xserver/entity/mnger"
+	"xserver/entity/cache"
 	"xserver/entity/nats"
 	"xserver/middleware"
 
@@ -22,14 +22,14 @@ var upgrader = websocket.Upgrader{
 	},
 }
 
-func msgHandler(userId uint64, conn *websocket.Conn, ch chan []byte) {
-	devs := mnger.UserDevs[userId]
+func msgHandler(userId uint, conn *websocket.Conn, ch chan []byte) {
+	devs := cache.UserDevs(userId)
 	for v := range ch {
 		if v == nil {
 			break
 		}
 		deviceId := jsoniter.Get(v, "deviceId").ToInt()
-		if devs.Include(deviceId) {
+		if devs != nil && devs.Include(deviceId) {
 			conn.WriteMessage(websocket.TextMessage, v)
 		}
 	}

@@ -1,7 +1,7 @@
 package model
 
 type SysTationOpt struct {
-	Id           uint64 `json:"id" gorm:"primary_key"`
+	Id           uint   `json:"id" gorm:"primary_key"`
 	Name         string `json:"name"` // 名称
 	Scheme       string `json:"scheme"`
 	Host         string `json:"host" gorm:"comment:地址;"`    //

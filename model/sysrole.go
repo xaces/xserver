@@ -2,13 +2,13 @@ package model
 
 // SysRole
 type SysRoleOpt struct {
-	Id       uint64   `json:"roleId" gorm:"primary_key"`
-	RoleName string   `json:"roleName" gorm:"not null;comment:角色名称;"`
-	RoleCode string   `json:"roleCode" gorm:"unique_index;size:100;not null;comment:角色权限字符串;"`
-	RoleType string   `json:"roleType" gorm:"size:1;default:'1';"`
-	Enable   string   `json:"enable" gorm:"size:1,default:'1';comment:0禁用1正常;"`
-	MenuIds  JUint64s `json:"menuIds" gorm:""`
-	Details  string   `json:"details"`
+	Id       uint   `json:"roleId" gorm:"primary_key"`
+	RoleName string `json:"roleName" gorm:"not null;comment:角色名称;"`
+	RoleCode string `json:"roleCode" gorm:"unique_index;size:100;not null;comment:角色权限字符串;"`
+	RoleType string `json:"roleType" gorm:"size:1;default:'1';"`
+	Enable   string `json:"enable" gorm:"size:1,default:'1';comment:0禁用1正常;"`
+	MenuIds  JUints `json:"menuIds" gorm:""`
+	Details  string `json:"details"`
 }
 
 type SysRole struct {

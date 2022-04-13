@@ -1,9 +1,9 @@
 package model
 
 type OprOrganizationOpt struct {
-	Id       uint64 `json:"id" gorm:"primary_key"` //
+	Id       uint   `json:"id" gorm:"primary_key"` //
 	Name     string `json:"name"`                  // 名称
-	ParentId uint64 `json:"parentId"`
+	ParentId uint   `json:"parentId"`
 	Enable   bool   `json:"enable" gorm:"default:1;comment:0禁用 1启动;"`
 	UserName string `json:"username"` // 管理账号
 	Details  string `json:"details"`

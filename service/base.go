@@ -10,26 +10,19 @@ import (
 
 func Deletes(v interface{}, c *gin.Context) {
 	idstr := ctx.ParamString(c, "id")
-	if idstr == "" {
-		ctx.JSONError().WriteTo(c)
-		return
-	}
-	ids := util.StringToIntSlice(idstr, ",")
-	if err := orm.DbDeleteByIds(v, ids); err != nil {
-		ctx.JSONWriteError(err, c)
-		return
+	if idstr != "" {
+		ids := util.StringToIntSlice(idstr, ",")
+		if err := orm.DbDeleteByIds(v, ids); err != nil {
+			ctx.JSONWriteError(err, c)
+			return
+		}
 	}
 	ctx.JSONOk().WriteTo(c)
 }
 
 func QueryById(v interface{}, c *gin.Context) {
-	queryId, err := ctx.ParamInt(c, "id")
-	if err != nil {
-		ctx.JSONWriteError(err, c)
-		return
-	}
-	err = orm.DbFirstById(v, queryId)
-	if err != nil {
+	queryId := ctx.ParamUInt(c, "id")
+	if err := orm.DbFirstById(v, queryId); err != nil {
 		ctx.JSONWriteError(err, c)
 		return
 	}

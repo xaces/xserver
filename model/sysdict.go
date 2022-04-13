@@ -2,7 +2,7 @@ package model
 
 // SysDictDataOpt 操作请求(修改/更新)
 type SysDictDataOpt struct {
-	Id        uint64 `json:"dataId" gorm:"primary_key"`
+	Id        uint   `json:"dataId" gorm:"primary_key"`
 	Enable    string `json:"enable" gorm:"size:1;default:'0';comment:帐号状态(0正常 1停用);"`
 	DataLabel string `json:"dataLabel"` // 字典标签
 	DataValue string `json:"dataValue"` // 字典键值
@@ -23,7 +23,7 @@ func (o *SysDictData) TableName() string {
 
 // SysDictTypeOpt 操作请求(修改/更新)
 type SysDictTypeOpt struct {
-	Id          uint64 `json:"typeId" gorm:"primary_key"`
+	Id          uint   `json:"typeId" gorm:"primary_key"`
 	Enable      string `json:"enable" gorm:"size:1;default:'0';comment:帐号状态(0正常 1停用);"`
 	TypeName    string `json:"typeName"`
 	TypeCode    string `json:"typeCode"`

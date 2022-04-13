@@ -1,4 +1,4 @@
-package mnger
+package cache
 
 import (
 	"xserver/util"
@@ -11,19 +11,23 @@ type devUser struct {
 	DeviceIds string
 }
 
-var UserDevs map[uint64]*devUser = make(map[uint64]*devUser)
+var gUserDevs map[uint]*devUser = make(map[uint]*devUser)
 
-func NewDevUser(userId uint64, idstr string) *devUser{
-	if v, ok := UserDevs[userId]; ok {
-		return v
-	}
+func NewDevUser(userId uint, idstr string) *devUser {
 	u := &devUser{
 		Val:       xutils.NewBitMap(64),
 		DeviceIds: idstr,
 	}
 	u.Set(idstr)
-	UserDevs[userId] = u
+	gUserDevs[userId] = u
 	return u
+}
+
+func UserDevs(userId uint) *devUser {
+	if v, ok := gUserDevs[userId]; ok {
+		return v
+	}
+	return nil
 }
 
 func (d *devUser) Set(idstr string) {
