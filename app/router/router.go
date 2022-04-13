@@ -39,6 +39,7 @@ func initRouter(o *Option) *gin.Engine {
 	root.POST("/login", controller.LoginHandler)
 	root.POST("/logout", controller.LogoutHandler)
 	root.GET("/ws", controller.WsHandler)
+	root.GET("/devices/:guid", controller.DevicesHandler)
 	jwt := root.Group("")
 	jwt.Use(middleware.JWTAuth())
 	jwt.Any("/station/*api", controller.ProxyHandler("/station/api"))
