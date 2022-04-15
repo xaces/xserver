@@ -7,8 +7,8 @@ import (
 )
 
 var (
-	sysTation  = make(map[string]*model.SysTation)
-	defStation = model.SysTation{
+	gSysTations = make(map[string]*model.SysTation)
+	gDefStation = model.SysTation{
 		SysTationOpt: model.SysTationOpt{
 			Scheme: "http",
 			Host:   "127.0.0.1:12100",
@@ -18,15 +18,15 @@ var (
 
 func SysTation(guid string) *model.SysTation {
 	if guid == "" {
-		return &defStation
+		return &gDefStation
 	}
-	if v, ok := sysTation[guid]; ok {
+	if v, ok := gSysTations[guid]; ok {
 		return v
 	}
 	v := &model.SysTation{}
 	if err := orm.DbFirstBy(v, "guid = ?", guid); err != nil {
 		return nil
 	}
-	sysTation[guid] = v
+	gSysTations[guid] = v
 	return v
 }
