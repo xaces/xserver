@@ -16,10 +16,32 @@ type SysMenuOpt struct {
 // SysMenu 权限
 type SysMenu struct {
 	SysMenuOpt
-	CreatedAt jtime     `json:"createTime" gorm:"column:created_time;"`
+	CreatedAt jtime     `json:"createTime"`
 	Children  []SysMenu `json:"children,omitempty" gorm:"-"`
+	// Children []SysMenu `json:"children,omitempty" gorm:"foreignKey:ParentId;"`
 }
 
 func (o *SysMenu) TableName() string {
 	return "t_sysmenu"
+}
+
+func (o *SysMenu) filterChildren(data []SysMenu) {
+	for _, v := range data {
+		if v.ParentId != o.Id {
+			continue
+		}
+		v.filterChildren(data)
+		o.Children = append(o.Children, v)
+	}
+}
+
+func SysMenuTree(data []SysMenu, id uint) (tree []SysMenu) {
+	for _, v := range data {
+		if v.ParentId != id {
+			continue
+		}
+		v.filterChildren(data)
+		tree = append(tree, v)
+	}
+	return
 }
