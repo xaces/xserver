@@ -34,13 +34,13 @@ func (o *DictType) GetHandler(c *gin.Context) {
 
 // AddHandler 新增
 func (o *DictType) AddHandler(c *gin.Context) {
-	var data model.SysDictType
+	var p model.SysDictType
 	//获取参数
-	if err := c.ShouldBind(&data.SysDictTypeOpt); err != nil {
+	if err := c.ShouldBind(&p.SysDictTypeOpt); err != nil {
 		ctx.JSONWriteError(err, c)
 		return
 	}
-	if err := orm.DbCreate(&data); err != nil {
+	if err := orm.DbCreate(&p); err != nil {
 		ctx.JSONWriteError(err, c)
 		return
 	}
@@ -49,13 +49,13 @@ func (o *DictType) AddHandler(c *gin.Context) {
 
 // UpdateHandler 修改
 func (o *DictType) UpdateHandler(c *gin.Context) {
-	var data model.SysDictType
+	var p model.SysDictType
 	//获取参数
-	if err := c.ShouldBind(&data.SysDictTypeOpt); err != nil {
+	if err := c.ShouldBind(&p.SysDictTypeOpt); err != nil {
 		ctx.JSONWriteError(err, c)
 		return
 	}
-	if err := orm.DbUpdateModel(&data); err != nil {
+	if err := orm.DbUpdateModel(&p); err != nil {
 		ctx.JSONWriteError(err, c)
 		return
 	}

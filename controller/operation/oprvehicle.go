@@ -89,13 +89,13 @@ func (o *Vehicle) BatchAddHandler(c *gin.Context) {
 
 // UpdateHandler 修改
 func (o *Vehicle) UpdateHandler(c *gin.Context) {
-	var data model.OprVehicle
+	var p model.OprVehicle
 	//获取参数
-	if err := c.ShouldBind(&data.OprVehicleOpt); err != nil {
+	if err := c.ShouldBind(&p.OprVehicleOpt); err != nil {
 		ctx.JSONWriteError(err, c)
 		return
 	}
-	if err := orm.DbUpdateModel(&data); err != nil {
+	if err := orm.DbUpdateModel(&p); err != nil {
 		ctx.JSONWriteError(err, c)
 		return
 	}

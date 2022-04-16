@@ -57,18 +57,18 @@ func (o *User) GetRolesHandler(c *gin.Context) {
 
 // AddHandler 新增用户
 func (o *User) AddHandler(c *gin.Context) {
-	var data model.SysUser
+	var p model.SysUser
 	//获取参数
-	if err := c.ShouldBind(&data); err != nil {
+	if err := c.ShouldBind(&p.SysUserOpt); err != nil {
 		ctx.JSONWriteError(err, c)
 		return
 	}
 	tok := middleware.GetUserToken(c)
-	data.OrganizeGuid = tok.OrganizeGuid
-	data.OrganizeName = tok.OrganizeName
-	data.CreatedBy = tok.UserName
-	data.UserType = model.SysUserTypeComm
-	if err := service.SysUserCreate(&data); err != nil {
+	p.OrganizeGuid = tok.OrganizeGuid
+	p.OrganizeName = tok.OrganizeName
+	p.CreatedBy = tok.UserName
+	p.UserType = model.SysUserTypeComm
+	if err := service.SysUserCreate(&p); err != nil {
 		ctx.JSONWriteError(err, c)
 		return
 	}
@@ -77,12 +77,12 @@ func (o *User) AddHandler(c *gin.Context) {
 
 // EnableHandler 改变状态
 func (o *User) EnableHandler(c *gin.Context) {
-	var data model.SysUser
-	if err := c.ShouldBind(&data); err != nil {
+	var p model.SysUser
+	if err := c.ShouldBind(&p.SysUserOpt); err != nil {
 		ctx.JSONWriteError(err, c)
 		return
 	}
-	if err := orm.DbUpdateColById(&data, data.Id, "enable", data.Enable); err != nil {
+	if err := orm.DbUpdateColById(&p, p.Id, "enable", p.Enable); err != nil {
 		ctx.JSONWriteError(err, c)
 		return
 	}
@@ -116,8 +116,8 @@ func (o *User) ProfileHandler(c *gin.Context) {
 
 // UpdatePwdHandler 重置密码
 func (o *User) UpdatePwdHandler(c *gin.Context) {
-	var param updatePwd
-	if err := c.ShouldBind(&param); err != nil {
+	var p updatePwd
+	if err := c.ShouldBind(&p); err != nil {
 		ctx.JSONWriteError(err, c)
 		return
 	}
@@ -127,12 +127,12 @@ func (o *User) UpdatePwdHandler(c *gin.Context) {
 		ctx.JSONWriteError(err, c)
 		return
 	}
-	oldPassword := service.SysUserPassword(&data, param.OldPassword)
+	oldPassword := service.SysUserPassword(&data, p.OldPassword)
 	if oldPassword != data.Password {
 		ctx.JSONWriteError(errors.New("old password error"), c)
 		return
 	}
-	newPassword := service.SysUserPassword(&data, param.NewPassword)
+	newPassword := service.SysUserPassword(&data, p.NewPassword)
 	if err := orm.DbUpdateColById(&data, data.Id, "password", newPassword); err != nil {
 		ctx.JSONWriteError(err, c)
 		return

@@ -35,13 +35,13 @@ func (o *File) GetHandler(c *gin.Context) {
 
 // AddHandler 新增
 func (o *File) AddHandler(c *gin.Context) {
-	var data model.SysFile
+	var p model.SysFile
 	//获取参数
-	if err := c.ShouldBind(&data.SysFileOpt); err != nil {
+	if err := c.ShouldBind(&p.SysFileOpt); err != nil {
 		ctx.JSONWriteError(err, c)
 		return
 	}
-	if err := orm.DbCreate(&data); err != nil {
+	if err := orm.DbCreate(&p); err != nil {
 		ctx.JSONWriteError(err, c)
 		return
 	}
@@ -50,13 +50,13 @@ func (o *File) AddHandler(c *gin.Context) {
 
 // UpdateHandler 修改
 func (o *File) UpdateHandler(c *gin.Context) {
-	var data model.SysFile
+	var p model.SysFile
 	//获取参数
-	if err := c.ShouldBind(&data.SysFileOpt); err != nil {
+	if err := c.ShouldBind(&p.SysFileOpt); err != nil {
 		ctx.JSONWriteError(err, c)
 		return
 	}
-	if err := orm.DbUpdateModel(&data); err != nil {
+	if err := orm.DbUpdateModel(&p); err != nil {
 		ctx.JSONWriteError(err, c)
 		return
 	}
@@ -81,12 +81,15 @@ func (o *File) UploadHandler(c *gin.Context) {
 		return
 	}
 	tok := middleware.GetUserToken(c)
-	data := &model.SysFile{}
-	data.FileName = fileHead.Filename
-	data.FilePath = filename
-	data.FileSize = fileHead.Size
-	data.FileDesc = fileHead.Filename
-	data.CreatedBy = tok.UserName
+	data := &model.SysFile{
+		SysFileOpt: model.SysFileOpt{
+			FileName: fileHead.Filename,
+			FilePath: filename,
+			FileSize: fileHead.Size,
+			FileDesc: fileHead.Filename,
+		},
+		CreatedBy: tok.UserName,
+	}
 	if err := orm.DbCreate(data); err != nil {
 		ctx.JSONWriteError(err, c)
 		return

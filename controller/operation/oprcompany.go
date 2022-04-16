@@ -39,26 +39,26 @@ func (o *Company) GetHandler(c *gin.Context) {
 
 // AddHandler 新增
 func (o *Company) AddHandler(c *gin.Context) {
-	var data model.OprOrganization
+	var p model.OprOrganization
 	//获取参数
-	if err := c.ShouldBind(&data.OprOrganizationOpt); err != nil {
+	if err := c.ShouldBind(&p.OprOrganizationOpt); err != nil {
 		ctx.JSONWriteError(err, c)
 		return
 	}
-	data.Guid = util.NUID()
+	p.Guid = util.NUID()
 	tok := middleware.GetUserToken(c)
 	u := &model.SysUser{}
-	u.UserName = data.UserName
+	u.UserName = p.UserName
 	u.CreatedBy = tok.UserName
-	u.OrganizeName = data.Name
+	u.OrganizeName = p.Name
 	u.UserType = model.SysUserTypeAdmin
-	u.OrganizeGuid = data.Guid
+	u.OrganizeGuid = p.Guid
 	u.DeviceIds = "*"
 	if err := service.SysUserCreate(u); err != nil {
 		ctx.JSONWriteError(err, c)
 		return
 	}
-	if err := orm.DbCreate(&data); err != nil {
+	if err := orm.DbCreate(&p); err != nil {
 		ctx.JSONWriteError(err, c)
 		return
 	}
@@ -67,13 +67,13 @@ func (o *Company) AddHandler(c *gin.Context) {
 
 // UpdateHandler 修改
 func (o *Company) UpdateHandler(c *gin.Context) {
-	var data model.OprOrganization
+	var p model.OprOrganization
 	//获取参数
-	if err := c.ShouldBind(&data.OprOrganizationOpt); err != nil {
+	if err := c.ShouldBind(&p.OprOrganizationOpt); err != nil {
 		ctx.JSONWriteError(err, c)
 		return
 	}
-	if err := orm.DbUpdateModel(&data); err != nil {
+	if err := orm.DbUpdateModel(&p); err != nil {
 		ctx.JSONWriteError(err, c)
 		return
 	}

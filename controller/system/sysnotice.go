@@ -34,13 +34,13 @@ func (o *Notice) GetHandler(c *gin.Context) {
 
 // AddHandler 新增
 func (o *Notice) AddHandler(c *gin.Context) {
-	var data model.SysNotice
+	var p model.SysNotice
 	//获取参数
-	if err := c.ShouldBind(&data); err != nil {
+	if err := c.ShouldBind(&p.SysNoticeOpt); err != nil {
 		ctx.JSONWriteError(err, c)
 		return
 	}
-	if err := orm.DbCreate(&data); err != nil {
+	if err := orm.DbCreate(&p); err != nil {
 		ctx.JSONWriteError(err, c)
 		return
 	}

@@ -69,17 +69,17 @@ func checkAddDept(req *model.SysDept) error {
 
 // AddHandler 新增
 func (o *Dept) AddHandler(c *gin.Context) {
-	var param model.SysDept
+	var p model.SysDept
 	//获取参数
-	if err := c.ShouldBind(&param); err != nil {
+	if err := c.ShouldBind(&p.SysDeptOpt); err != nil {
 		ctx.JSONWriteError(err, c)
 		return
 	}
-	if err := checkAddDept(&param); err == nil {
+	if err := checkAddDept(&p); err == nil {
 		ctx.JSONWriteError(errors.New("dept already exists"), c)
 		return
 	}
-	if err := orm.DbCreate(&param); err != nil {
+	if err := orm.DbCreate(&p); err != nil {
 		ctx.JSONWriteError(err, c)
 		return
 	}
@@ -88,12 +88,12 @@ func (o *Dept) AddHandler(c *gin.Context) {
 
 // UpdateHandler 修改
 func (o *Dept) UpdateHandler(c *gin.Context) {
-	var data model.SysDept
-	if err := c.ShouldBind(&data); err != nil {
+	var p model.SysDept
+	if err := c.ShouldBind(&p.SysDeptOpt); err != nil {
 		ctx.JSONWriteError(err, c)
 		return
 	}
-	if err := orm.DbUpdateModel(data); err != nil {
+	if err := orm.DbUpdateModel(&p); err != nil {
 		ctx.JSONWriteError(err, c)
 		return
 	}

@@ -45,8 +45,8 @@ func (o *Role) GetRolePowerHandler(c *gin.Context) {
 		ctx.JSONWriteError(err, c)
 		return
 	}
-	var data model.SysRole
-	if err := orm.DbFirstById(&data, getId); err != nil {
+	var p model.SysRole
+	if err := orm.DbFirstById(&p, getId); err != nil {
 		ctx.JSONWriteError(err, c)
 		return
 	}
@@ -63,18 +63,18 @@ func (o *Role) GetRolePowerHandler(c *gin.Context) {
 		orm.DbFind(&menus)
 	}
 	// roles 查询用户权限 menus当前登录用户全面
-	ctx.JSONOk().WriteData(gin.H{"menuIds": data.MenuIds, "menus": menus}, c)
+	ctx.JSONOk().WriteData(gin.H{"menuIds": p.MenuIds, "menus": menus}, c)
 }
 
 // AddHandler 新增
 func (o *Role) AddHandler(c *gin.Context) {
-	var data model.SysRole
+	var p model.SysRole
 	//获取参数
-	if err := c.ShouldBind(&data); err != nil {
+	if err := c.ShouldBind(&p.SysRoleOpt); err != nil {
 		ctx.JSONWriteError(err, c)
 		return
 	}
-	if err := orm.DbCreate(&data); err != nil {
+	if err := orm.DbCreate(&p); err != nil {
 		ctx.JSONWriteError(err, c)
 		return
 	}
@@ -83,13 +83,13 @@ func (o *Role) AddHandler(c *gin.Context) {
 
 // UpdateHandler 修改
 func (o *Role) UpdateHandler(c *gin.Context) {
-	var data model.SysRole
-	if err := c.ShouldBind(&data); err != nil {
+	var p model.SysRole
+	if err := c.ShouldBind(&p.SysRoleOpt); err != nil {
 		ctx.JSONWriteError(err, c)
 		return
 	}
 	// 更新数据
-	if err := orm.DbUpdateById(data, data.Id); err != nil {
+	if err := orm.DbUpdateById(p, p.Id); err != nil {
 		ctx.JSONWriteError(err, c)
 		return
 	}
@@ -98,13 +98,13 @@ func (o *Role) UpdateHandler(c *gin.Context) {
 
 // EnableHandler 改变状态
 func (o *Role) EnableHandler(c *gin.Context) {
-	var data model.SysRole
+	var p model.SysRole
 	//获取参数
-	if err := c.ShouldBind(&data); err != nil {
+	if err := c.ShouldBind(&p.SysRoleOpt); err != nil {
 		ctx.JSONWriteError(err, c)
 		return
 	}
-	if err := orm.DbUpdateColById(model.SysRole{}, data.Id, "enable", data.Enable); err != nil {
+	if err := orm.DbUpdateColById(model.SysRole{}, p.Id, "enable", p.Enable); err != nil {
 		ctx.JSONWriteError(err, c)
 		return
 	}

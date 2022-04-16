@@ -34,12 +34,12 @@ func (o *Menu) GetHandler(c *gin.Context) {
 
 // AddHandler 新增
 func (o *Menu) AddHandler(c *gin.Context) {
-	var data model.SysMenu
-	if err := c.ShouldBind(&data); err != nil {
+	var p model.SysMenu
+	if err := c.ShouldBind(&p.SysMenuOpt); err != nil {
 		ctx.JSONWriteError(err, c)
 		return
 	}
-	if err := orm.DbCreate(&data); err != nil {
+	if err := orm.DbCreate(&p); err != nil {
 		ctx.JSONWriteError(err, c)
 		return
 	}
@@ -48,12 +48,12 @@ func (o *Menu) AddHandler(c *gin.Context) {
 
 // UpdateHandler 修改
 func (o *Menu) UpdateHandler(c *gin.Context) {
-	var data model.SysMenu
-	if err := c.ShouldBind(&data); err != nil {
+	var p model.SysMenu
+	if err := c.ShouldBind(&p.SysMenuOpt); err != nil {
 		ctx.JSONWriteError(err, c)
 		return
 	}
-	if err := orm.DbUpdateModel(&data); err != nil {
+	if err := orm.DbUpdateModel(&p); err != nil {
 		ctx.JSONWriteError(err, c)
 		return
 	}

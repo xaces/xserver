@@ -63,13 +63,13 @@ func (o *Dict) RoleDeptTreeselectHandler(c *gin.Context) {
 
 // AddHandler 新增字典
 func (o *Dict) AddHandler(c *gin.Context) {
-	var data model.SysDictData
+	var p model.SysDictData
 	//获取参数
-	if err := c.ShouldBind(&data.SysDictDataOpt); err != nil {
+	if err := c.ShouldBind(&p.SysDictDataOpt); err != nil {
 		ctx.JSONWriteError(err, c)
 		return
 	}
-	if err := orm.DbCreate(&data); err != nil {
+	if err := orm.DbCreate(&p); err != nil {
 		ctx.JSONWriteError(err, c)
 		return
 	}
@@ -78,13 +78,13 @@ func (o *Dict) AddHandler(c *gin.Context) {
 
 // UpdateHandler 修改
 func (o *Dict) UpdateHandler(c *gin.Context) {
-	var data model.SysDictData
+	var p model.SysDictData
 	//获取参数
-	if err := c.ShouldBind(&data.SysDictDataOpt); err != nil {
+	if err := c.ShouldBind(&p.SysDictDataOpt); err != nil {
 		ctx.JSONWriteError(err, c)
 		return
 	}
-	if err := orm.DbUpdateModel(&data); err != nil {
+	if err := orm.DbUpdateModel(&p); err != nil {
 		ctx.JSONWriteError(err, c)
 		return
 	}
