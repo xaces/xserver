@@ -4,9 +4,14 @@ import (
 	"github.com/wlgd/xutils/mq"
 )
 
+type client struct {
+	msg    chan []byte
+	active bool
+}
+
 type nats struct {
-	Conn    *mq.NatsClient
-	chanmap map[string]chan []byte
+	Conn *mq.NatsClient
+	clis map[string]*client
 }
 
 var Default = &nats{}
@@ -15,8 +20,13 @@ func (n *nats) MsgPub(msg []byte) {
 	if msg == nil {
 		return
 	}
-	for _, v := range n.chanmap {
-		v <- msg
+	for k, v := range n.clis {
+		if v.active {
+			v.msg <- msg
+			continue
+		}
+		close(v.msg)
+		delete(n.clis, k)
 	}
 }
 
@@ -29,7 +39,7 @@ func (n *nats) Run(addr string) error {
 		return err
 	}
 	n.Conn = conn
-	n.chanmap = make(map[string]chan []byte)
+	n.clis = make(map[string]*client)
 	n.Conn.Subscribe("device.online", func(b []byte) {
 		n.MsgPub(b)
 	})
@@ -45,14 +55,25 @@ func (n *nats) Run(addr string) error {
 	return nil
 }
 
-func (n *nats) PushClient(key string, ch chan []byte) {
-	if n.Conn != nil {
-		n.chanmap[key] = ch
+func (n *nats) Push(key string) chan []byte {
+	if n.Conn == nil {
+		return nil
 	}
+	c := &client{
+		active: true,
+		msg:    make(chan []byte, 10),
+	}
+	n.clis[key] = c
+	return c.msg
 }
 
-func (n *nats) PullClient(key string) {
-	delete(n.chanmap, key)
+func (n *nats) Pop(key string) {
+	if n.Conn == nil {
+		return
+	}
+	if v, ok := n.clis[key]; ok {
+		v.active = false
+	}
 }
 
 func (n *nats) Stop() {

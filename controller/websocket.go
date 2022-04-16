@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"errors"
 	"log"
 	"net/http"
 
@@ -24,9 +25,9 @@ var upgrader = websocket.Upgrader{
 
 func msgHandler(userId uint, conn *websocket.Conn, ch chan []byte) {
 	devs := cache.UserDevs(userId)
-	for v := range ch {
+	for v := range ch { // 关闭chan自动退出
 		if v == nil {
-			break
+			continue
 		}
 		deviceId := jsoniter.Get(v, "deviceId").ToInt()
 		if devs != nil && devs.Include(deviceId) {
@@ -49,10 +50,12 @@ func WsHandler(c *gin.Context) {
 		return
 	}
 	defer ws.Close()
-	msgchan := make(chan []byte, 20)
-	defer close(msgchan)
-	nats.Default.PushClient(c.Request.RemoteAddr, msgchan)
-	go msgHandler(claims.SysUserToken.Id, ws, msgchan)
+	msgChan := nats.Default.Push(c.Request.RemoteAddr)
+	if msgChan == nil {
+		ctx.JSONWriteError(errors.New("subscribe server"), c)
+		return
+	}
+	go msgHandler(claims.SysUserToken.Id, ws, msgChan)
 	for {
 		mt, message, err := ws.ReadMessage()
 		if err != nil {
@@ -66,6 +69,5 @@ func WsHandler(c *gin.Context) {
 			break
 		}
 	}
-	nats.Default.PullClient(c.Request.RemoteAddr)
-	msgchan <- nil
+	nats.Default.Pop(c.Request.RemoteAddr)
 }
