@@ -37,8 +37,7 @@ func (o *Fleet) LisTreeHandler(c *gin.Context) {
 
 // GetHandler 详细
 func (o *Fleet) GetHandler(c *gin.Context) {
-	var data model.OprOrganization
-	service.QueryById(&data, c)
+	service.QueryById(&model.OprOrganization{}, c)
 }
 
 // AddHandler 新增

@@ -26,8 +26,7 @@ func (o *Station) ListHandler(c *gin.Context) {
 
 // GetHandler 详细
 func (o *Station) GetHandler(c *gin.Context) {
-	var data model.SysTation
-	service.QueryById(&data, c)
+	service.QueryById(&model.SysTation{}, c)
 }
 
 // AddHandler 新增

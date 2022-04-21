@@ -34,8 +34,7 @@ func (o *Role) PageHandler(c *gin.Context) {
 
 // GetHandler 查询
 func (o *Role) GetHandler(c *gin.Context) {
-	var data model.SysRole
-	service.QueryById(&data, c)
+	service.QueryById(&model.SysRole{}, c)
 }
 
 // GetRolePowerHandler 查询

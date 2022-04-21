@@ -28,8 +28,7 @@ func (o *Menu) ListHandler(c *gin.Context) {
 
 // GetHandler 查询详细
 func (o *Menu) GetHandler(c *gin.Context) {
-	var data model.SysMenu
-	service.QueryById(&data, c)
+	service.QueryById(&model.SysMenu{}, c)
 }
 
 // AddHandler 新增

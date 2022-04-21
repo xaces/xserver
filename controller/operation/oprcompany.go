@@ -33,8 +33,7 @@ func (o *Company) ListHandler(c *gin.Context) {
 
 // GetHandler 详细
 func (o *Company) GetHandler(c *gin.Context) {
-	var data model.OprOrganization
-	service.QueryById(&data, c)
+	service.QueryById(&model.OprOrganization{}, c)
 }
 
 // AddHandler 新增

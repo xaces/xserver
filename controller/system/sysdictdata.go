@@ -40,8 +40,7 @@ func (o *Dict) ListExcludeHandler(c *gin.Context) {
 
 // GetHandler 查询详细
 func (o *Dict) GetHandler(c *gin.Context) {
-	var data model.SysDictData
-	service.QueryById(&data, c)
+	service.QueryById(&model.SysDictData{}, c)
 }
 
 // DictTypeHandler

@@ -41,8 +41,7 @@ func (o *Dept) ListExcludeHandler(c *gin.Context) {
 
 // GetHandler 查询详细
 func (o *Dept) GetHandler(c *gin.Context) {
-	var data model.SysDept
-	service.QueryById(&data, c)
+	service.QueryById(&model.SysDept{}, c)
 }
 
 // TreeselectHandler 查询下拉树结构

@@ -28,8 +28,7 @@ func (o *Notice) ListHandler(c *gin.Context) {
 
 // GetHandler 详细
 func (o *Notice) GetHandler(c *gin.Context) {
-	var data model.SysNotice
-	service.QueryById(&data, c)
+	service.QueryById(&model.SysNotice{}, c)
 }
 
 // AddHandler 新增

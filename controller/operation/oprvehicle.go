@@ -32,8 +32,7 @@ func (o *Vehicle) ListHandler(c *gin.Context) {
 
 // GetHandler 获取指定id
 func (o *Vehicle) GetHandler(c *gin.Context) {
-	var data model.OprVehicle
-	service.QueryById(&data, c)
+	service.QueryById(&model.OprVehicle{}, c)
 }
 
 // AddHandler 新增
@@ -125,22 +124,7 @@ func (o *Vehicle) ResetOrganizeHandler(c *gin.Context) {
 
 // DeleteHandler 删除
 func (o *Vehicle) DeleteHandler(c *gin.Context) {
-	idstr := ctx.ParamString(c, "id")
-	if idstr == "" {
-		ctx.JSONError().WriteTo(c)
-		return
-	}
-	ids := util.StringToIntSlice(idstr, ",")
-	var devs []model.OprVehicle
-	if _, err := orm.DbFindBy(&devs, "id in (?)", ids); err != nil {
-		ctx.JSONError().WriteTo(c)
-		return
-	}
-	if err := orm.DbDeletes(&devs); err != nil {
-		ctx.JSONError().WriteTo(c)
-		return
-	}
-	ctx.JSONOk().WriteTo(c)
+	service.Deletes(&model.OprVehicle{}, c)
 }
 
 func VehicleRouter(r *gin.RouterGroup) {

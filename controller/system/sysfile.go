@@ -29,8 +29,7 @@ func (o *File) ListHandler(c *gin.Context) {
 
 // GetHandler 查询详细
 func (o *File) GetHandler(c *gin.Context) {
-	var data model.SysFile
-	service.QueryById(&data, c)
+	service.QueryById(&model.SysFile{}, c)
 }
 
 // AddHandler 新增

@@ -28,8 +28,7 @@ func (o *DictType) ListHandler(c *gin.Context) {
 
 // GetHandler 详细
 func (o *DictType) GetHandler(c *gin.Context) {
-	var data model.SysDictType
-	service.QueryById(&data, c)
+	service.QueryById(&model.SysDictType{}, c)
 }
 
 // AddHandler 新增
