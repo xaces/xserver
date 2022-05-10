@@ -1,0 +1,4 @@
+[submodule "Pear-Admin-Layui"]
+	path = Pear-Admin-Layui
+	url = https://gitee.com/xdonwang/Pear-Admin-Layui.git
+	branch = xserver
