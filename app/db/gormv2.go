@@ -27,6 +27,7 @@ func Run(o *Options) error {
 		&model.SysPost{},
 		&model.SysFile{},
 		&model.SysTation{},
+		&model.SysNotice{},
 	)
 	db.AutoMigrate(
 		&model.OprOrganization{},

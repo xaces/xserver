@@ -129,11 +129,11 @@ func (o *Vehicle) DeleteHandler(c *gin.Context) {
 
 func VehicleRouter(r *gin.RouterGroup) {
 	v := Vehicle{}
-	r.GET("/vehicle/list", v.ListHandler)
-	r.GET("/vehicle/:id", v.GetHandler)
-	r.POST("/vehicle", v.AddHandler)
-	r.POST("/vehicle/batchAdd", v.BatchAddHandler)
-	r.PUT("/vehicle", v.UpdateHandler)
-	r.PUT("/vehicle/resetOrganize", v.ResetOrganizeHandler)
-	r.DELETE("/vehicle/:id", v.DeleteHandler)
+	r.GET("/list", v.ListHandler)
+	r.GET("/:id", v.GetHandler)
+	r.POST("", v.AddHandler)
+	r.POST("/batchAdd", v.BatchAddHandler)
+	r.PUT("", v.UpdateHandler)
+	r.PUT("/resetOrganize", v.ResetOrganizeHandler)
+	r.DELETE("/:id", v.DeleteHandler)
 }

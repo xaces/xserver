@@ -17,13 +17,13 @@ type Role struct {
 
 // PageHandler 列表
 func (o *Role) PageHandler(c *gin.Context) {
-	var param service.RolePage
-	if err := c.ShouldBind(&param); err != nil {
+	var p service.RolePage
+	if err := c.ShouldBind(&p); err != nil {
 		ctx.JSONWriteError(err, c)
 		return
 	}
 	tok := middleware.GetUserToken(c)
-	where := param.Where()
+	where := p.Where()
 	if tok.RoleId != model.SysUserRoleId {
 		where.Append("created_by like ?", tok.UserName) // 非管理员只能获取当前用户创建的的角色
 	}
@@ -116,12 +116,12 @@ func (o *Role) DeleteHandler(c *gin.Context) {
 }
 
 func RoleRouters(r *gin.RouterGroup) {
-	sysRole := Role{}
-	r.GET("/role/list", sysRole.PageHandler)
-	r.GET("/role/:id", sysRole.GetHandler)
-	r.POST("/role", sysRole.AddHandler)
-	r.GET("/role/getRolePower", sysRole.GetRolePowerHandler)
-	r.PUT("/role/enable", sysRole.EnableHandler)
-	r.PUT("/role", sysRole.UpdateHandler)
-	r.DELETE("/role/:id", sysRole.DeleteHandler)
+	o := Role{}
+	r.GET("/list", o.PageHandler)
+	r.GET("/:id", o.GetHandler)
+	r.POST("", o.AddHandler)
+	r.GET("/getRolePower", o.GetRolePowerHandler)
+	r.PUT("/enable", o.EnableHandler)
+	r.PUT("", o.UpdateHandler)
+	r.DELETE("/:id", o.DeleteHandler)
 }

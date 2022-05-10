@@ -67,10 +67,10 @@ func (o *Notice) DeleteHandler(c *gin.Context) {
 }
 
 func NoticeRouters(r *gin.RouterGroup) {
-	sysNotice := Notice{}
-	r.GET("/notice/list", sysNotice.ListHandler)
-	r.GET("/notice/:id", sysNotice.GetHandler)
-	r.POST("/notice", sysNotice.AddHandler)
-	r.PUT("/notice", sysNotice.UpdateHandler)
-	r.DELETE("/notice/:id", sysNotice.DeleteHandler)
+	o := Notice{}
+	r.GET("/list", o.ListHandler)
+	r.GET("/:id", o.GetHandler)
+	r.POST("", o.AddHandler)
+	r.PUT("", o.UpdateHandler)
+	r.DELETE("/:id", o.DeleteHandler)
 }

@@ -16,13 +16,13 @@ type DictType struct {
 
 // ListHandler 列表
 func (o *DictType) ListHandler(c *gin.Context) {
-	var param service.DictTypePage
-	if err := c.ShouldBind(&param); err != nil {
+	var p service.DictTypePage
+	if err := c.ShouldBind(&p); err != nil {
 		ctx.JSONWriteError(err, c)
 		return
 	}
 	var data []model.SysDictType
-	total, _ := orm.DbByWhere(&model.SysDictType{}, param.Where()).Find(&data)
+	total, _ := orm.DbByWhere(&model.SysDictType{}, p.Where()).Find(&data)
 	ctx.JSONOk().Write(gin.H{"total": total, "data": data}, c)
 }
 
@@ -67,10 +67,10 @@ func (o *DictType) DeleteHandler(c *gin.Context) {
 }
 
 func DictTypeRouters(r *gin.RouterGroup) {
-	sysDictType := DictType{}
-	r.GET("/dict/type/list", sysDictType.ListHandler)
-	r.GET("/dict/type/:id", sysDictType.GetHandler)
-	r.POST("/dict/type", sysDictType.AddHandler)
-	r.PUT("/dict/type", sysDictType.UpdateHandler)
-	r.DELETE("/dict/type/:id", sysDictType.DeleteHandler)
+	o := DictType{}
+	r.GET("/list", o.ListHandler)
+	r.GET("/:id", o.GetHandler)
+	r.POST("", o.AddHandler)
+	r.PUT("", o.UpdateHandler)
+	r.DELETE("/:id", o.DeleteHandler)
 }

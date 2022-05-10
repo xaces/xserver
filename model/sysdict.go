@@ -4,8 +4,8 @@ package model
 type SysDictDataOpt struct {
 	Id        uint   `json:"dataId" gorm:"primary_key"`
 	Enable    string `json:"enable" gorm:"size:1;default:'0';comment:帐号状态(0正常 1停用);"`
-	DataLabel string `json:"dataLabel"` // 字典标签
-	DataValue string `json:"dataValue"` // 字典键值
+	Label     string `json:"dataLabel"` // 字典标签
+	Value     string `json:"dataValue"` // 字典键值
 	TypeCode  string `json:"typeCode"`  // 字典类型
 	IsDefault string `json:"isDefault"` // 是否默认（Y是 N否）
 	CSSClass  string `json:"cssClass"`  // 样式属性（其他样式扩展）
@@ -25,8 +25,8 @@ func (o *SysDictData) TableName() string {
 type SysDictTypeOpt struct {
 	Id          uint   `json:"typeId" gorm:"primary_key"`
 	Enable      string `json:"enable" gorm:"size:1;default:'0';comment:帐号状态(0正常 1停用);"`
-	TypeName    string `json:"typeName"`
-	TypeCode    string `json:"typeCode"`
+	Name        string `json:"typeName"`
+	Code        string `json:"typeCode"`
 	Description string `json:"description"`
 }
 type SysDictType struct {

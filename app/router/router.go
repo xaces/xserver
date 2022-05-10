@@ -43,13 +43,13 @@ func initRouter(o *Option) *gin.Engine {
 	jwt := root.Group("")
 	jwt.Use(middleware.JWTAuth())
 	jwt.Any("/station/*api", controller.ProxyHandler("/station/api"))
-	system.InitRouters(jwt)
-	operation.InitRouters(jwt)
+	system.InitRouters(jwt.Group("/system"))
+	operation.InitRouters(jwt.Group("/operation"))
 	return r
 }
 
 type Option struct {
-	Timeout time.Duration
+	Timeout int64
 	Port    uint16
 	Root    string
 	View    string
@@ -66,8 +66,8 @@ func Run(o *Option) *http.Server {
 	s := &http.Server{
 		Addr:           address,
 		Handler:        r,
-		ReadTimeout:    o.Timeout * time.Second,
-		WriteTimeout:   o.Timeout * time.Second,
+		ReadTimeout:    time.Duration(o.Timeout) * time.Second,
+		WriteTimeout:   time.Duration(o.Timeout) * time.Second,
 		MaxHeaderBytes: 1 << 20,
 	}
 	go s.ListenAndServe()

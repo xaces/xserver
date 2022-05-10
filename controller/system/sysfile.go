@@ -86,6 +86,7 @@ func (o *File) UploadHandler(c *gin.Context) {
 			FilePath: filename,
 			FileSize: fileHead.Size,
 			FileDesc: fileHead.Filename,
+			FileType: fileHead.Filename,
 		},
 		CreatedBy: tok.UserName,
 	}
@@ -96,12 +97,18 @@ func (o *File) UploadHandler(c *gin.Context) {
 	ctx.JSONOk().WriteTo(c)
 }
 
+func (o *File) DownloadHandler(c *gin.Context) {
+	filename := ctx.ParamString(c, "file")
+	c.File(filename)
+}
+
 func FileRouters(r *gin.RouterGroup) {
-	sysFile := File{}
-	r.GET("/file/list", sysFile.ListHandler)
-	r.GET("/file/:id", sysFile.GetHandler)
-	r.POST("/file", sysFile.AddHandler)
-	r.PUT("/file", sysFile.UpdateHandler)
-	r.DELETE("/file/:id", sysFile.DeleteHandler)
-	r.POST("/file/upload", sysFile.UploadHandler)
+	o := File{}
+	r.GET("/list", o.ListHandler)
+	r.GET("/:id", o.GetHandler)
+	r.POST("", o.AddHandler)
+	r.PUT("", o.UpdateHandler)
+	r.DELETE("/:id", o.DeleteHandler)
+	r.POST("/upload", o.UploadHandler)
+	r.GET("/download/:file", o.DownloadHandler)
 }

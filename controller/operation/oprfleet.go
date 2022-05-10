@@ -83,11 +83,11 @@ func (o *Fleet) DevicesHandler(c *gin.Context) {
 
 func FleetRouters(r *gin.RouterGroup) {
 	o := Fleet{}
-	r.GET("/fleet/list", o.ListHandler)
-	r.GET("/fleet/listree", o.LisTreeHandler)
-	r.GET("/fleet/:id", o.GetHandler)
-	r.POST("/fleet", o.AddHandler)
-	r.PUT("/fleet", o.UpdateHandler)
-	r.DELETE("/fleet/:id", o.DeleteHandler)
-	r.GET("/fleet/devices", o.DevicesHandler)
+	r.GET("/list", o.ListHandler)
+	r.GET("/listree", o.LisTreeHandler)
+	r.GET("/:id", o.GetHandler)
+	r.POST("", o.AddHandler)
+	r.PUT("", o.UpdateHandler)
+	r.DELETE("/:id", o.DeleteHandler)
+	r.GET("/devices", o.DevicesHandler)
 }

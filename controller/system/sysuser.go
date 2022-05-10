@@ -237,8 +237,8 @@ func (o *User) CancelAuthDevicesHandler(c *gin.Context) {
 	orm.DbUpdateColById(&model.SysUser{}, p.UserId, "deviceIds", v.DeviceIds)
 }
 
-// DeviceLiveTreeHandler 实时设备树
-func (o *User) DeviceLiveTreeHandler(c *gin.Context) {
+// DeviceTreeHandler 设备树
+func (o *User) DeviceTreeHandler(c *gin.Context) {
 	t := middleware.GetUserToken(c)
 	devs := service.SysUserDevice(t)
 	// 过滤用户数据
@@ -297,21 +297,21 @@ func (o *User) DevicesHandler(c *gin.Context) {
 
 func UserRouters(r *gin.RouterGroup) {
 	o := User{}
-	r.GET("/user/list", o.PageHandler)
-	r.GET("/user/:id", o.GetHandler)
-	r.GET("/user/getRoles", o.GetRolesHandler)
-	r.POST("/user", o.AddHandler)
-	r.GET("/user/export", o.ExportHandler)
-	r.PUT("/user", o.UpdateHandler)
-	r.PUT("/user/resetPwd/:id", o.ResetPwdHandler)
-	r.DELETE("/user/:id", o.DeleteHandler)
-	r.PUT("/user/enable", o.EnableHandler)
-	r.GET("/user/profile", o.ProfileHandler)
-	r.PUT("/user/profile", o.UpdateHandler)
-	r.PUT("/user/profile/updatePwd", o.UpdatePwdHandler)
-	r.POST("/user/profile/avatar", o.ProfileAuatarHandler)
-	r.PUT("/user/authDevices", o.AuthDevicesHandler)
-	r.PUT("/user/cancelAuthDevices", o.CancelAuthDevicesHandler)
-	r.GET("/user/devices/liveTree", o.DeviceLiveTreeHandler)
-	r.GET("/user/devices", o.DevicesHandler)
+	r.GET("/list", o.PageHandler)
+	r.GET("/:id", o.GetHandler)
+	r.GET("/getRoles", o.GetRolesHandler)
+	r.POST("", o.AddHandler)
+	r.GET("/export", o.ExportHandler)
+	r.PUT("", o.UpdateHandler)
+	r.PUT("/resetPwd/:id", o.ResetPwdHandler)
+	r.DELETE("/:id", o.DeleteHandler)
+	r.PUT("/enable", o.EnableHandler)
+	r.GET("/profile", o.ProfileHandler)
+	r.PUT("/profile", o.UpdateHandler)
+	r.PUT("/profile/updatePwd", o.UpdatePwdHandler)
+	r.POST("/profile/avatar", o.ProfileAuatarHandler)
+	r.PUT("/authDevices", o.AuthDevicesHandler)
+	r.PUT("/cancelAuthDevices", o.CancelAuthDevicesHandler)
+	r.GET("/deviceTree", o.DeviceTreeHandler)
+	r.GET("/devices", o.DevicesHandler)
 }

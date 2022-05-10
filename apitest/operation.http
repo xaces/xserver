@@ -1,0 +1,49 @@
+
+######### 公司
+GET http://127.0.0.1:8080/xserver/operation/company
+Content-Type: application/json
+
+{
+    "name": "localtest",
+    "stationAddr": "127.0.0.1:12100"
+}
+
+
+######### 车辆
+GET http://127.0.0.1:8080/xserver/operation/vehicle/1
+Content-Type: application/json
+
+{
+}
+
+######### 车辆
+GET http://127.0.0.1:8080/xserver/devices/gQSmPuboIGQahHdxQisOOk
+Content-Type: application/json
+
+{
+}
+
+
+######### 车辆
+GET http://127.0.0.1:8080/xserver/system/menu/list
+Content-Type: application/json
+
+{
+}
+
+
+######### 
+GET http://127.0.0.1:8080/xserver/system/menu/16
+Content-Type: application/json
+
+{
+}
+
+####
+POST http://127.0.0.1:8080/xserver/system/menu
+Content-Type: application/json
+
+{
+    "parentId": 0,
+    "title": "testllo1111"
+}

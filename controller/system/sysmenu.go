@@ -59,16 +59,15 @@ func (o *Menu) UpdateHandler(c *gin.Context) {
 	ctx.JSONOk().WriteTo(c)
 }
 
-// DeleteHandler 删除
+// DeleteHandler 删除oo
 func (o *Menu) DeleteHandler(c *gin.Context) {
 	service.Deletes(&model.SysMenu{}, c)
 }
-
 func MenuRouters(r *gin.RouterGroup) {
-	sysMenu := Menu{}
-	r.GET("/menu/list", sysMenu.ListHandler)
-	r.GET("/menu/:id", sysMenu.GetHandler)
-	r.POST("/menu", sysMenu.AddHandler)
-	r.PUT("/menu", sysMenu.UpdateHandler)
-	r.DELETE("/menu/:id", sysMenu.DeleteHandler)
+	o := Menu{}
+	r.GET("/list", o.ListHandler)
+	r.GET("/:id", o.GetHandler)
+	r.POST("", o.AddHandler)
+	r.PUT("", o.UpdateHandler)
+	r.DELETE("/:id", o.DeleteHandler)
 }

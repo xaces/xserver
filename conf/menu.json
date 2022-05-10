@@ -1,0 +1,205 @@
+{
+  "code": 200,
+  "data": [
+    {
+      "id": 1,
+      "parentId": 0,
+      "title": "工作空间",
+      "type": "0",
+      "openType": "",
+      "icon": "layui-icon layui-icon-cellphone",
+      "href": "",
+      "details": "",
+      "checkArr": ""
+    },
+    {
+      "id": 2,
+      "parentId": 1,
+      "title": "系统管理",
+      "type": "0",
+      "openType": "",
+      "icon": "layui-icon layui-icon-set-fill",
+      "href": "",
+      "details": "",
+      "checkArr": ""
+    },
+    {
+      "id": 3,
+      "parentId": 1,
+      "title": "任务列表",
+      "type": "0",
+      "openType": "_iframe",
+      "icon": "layui-icon ",
+      "href": "view/flow/taskList.html",
+      "details": "",
+      "checkArr": ""
+    },
+    {
+      "id": 4,
+      "parentId": 1,
+      "title": "配套专栏",
+      "type": "0",
+      "openType": "_iframe",
+      "icon": "layui-icon",
+      "href": "",
+      "details": "",
+      "checkArr": ""
+    },
+    {
+      "id": 5,
+      "parentId": 1,
+      "title": "请假申请",
+      "type": "0",
+      "openType": "_iframe",
+      "icon": "layui-icon",
+      "href": "view/ext/leave.html",
+      "details": "",
+      "checkArr": ""
+    },
+    {
+      "id": 6,
+      "parentId": 1,
+      "title": "日志查看",
+      "type": "0",
+      "openType": "_iframe",
+      "icon": "layui-icon",
+      "href": "view/ext/log.html",
+      "details": "",
+      "checkArr": ""
+    },
+    {
+      "id": 7,
+      "parentId": 1,
+      "title": "定时任务",
+      "type": "0",
+      "openType": "_iframe",
+      "icon": "layui-icon ",
+      "href": "view/system/task.html",
+      "details": "",
+      "checkArr": ""
+    },
+    {
+      "id": 8,
+      "parentId": 1,
+      "title": "在线用户",
+      "type": "0",
+      "openType": "_iframe",
+      "icon": "layui-icon",
+      "href": "view/system/onlineUser.html",
+      "details": "",
+      "checkArr": ""
+    },
+    {
+      "id": 9,
+      "parentId": 2,
+      "title": "用户管理",
+      "type": "0",
+      "openType": "_iframe",
+      "icon": "layui-icon layui-icon-user",
+      "href": "view/system/user.html",
+      "details": "",
+      "checkArr": ""
+    },
+    {
+      "id": 10,
+      "parentId": 2,
+      "title": "权限管理",
+      "type": "0",
+      "openType": "_iframe",
+      "icon": "layui-icon layui-icon-face-cry",
+      "href": "view/system/power.html",
+      "details": "",
+      "checkArr": ""
+    },
+    {
+      "id": 11,
+      "parentId": 2,
+      "title": "角色管理",
+      "type": "0",
+      "openType": "_iframe",
+      "icon": "layui-icon",
+      "href": "view/system/role.html",
+      "details": "",
+      "checkArr": ""
+    },
+    {
+      "id": 12,
+      "parentId": 2,
+      "title": "部门管理",
+      "type": "0",
+      "openType": "_iframe",
+      "icon": "layui-icon",
+      "href": "view/system/deptment.html",
+      "details": "",
+      "checkArr": ""
+    },
+    {
+      "id": 13,
+      "parentId": 2,
+      "title": "接口文档",
+      "type": "0",
+      "openType": "_iframe",
+      "icon": "layui-icon",
+      "href": "",
+      "details": "",
+      "checkArr": ""
+    },
+    {
+      "id": 14,
+      "parentId": 2,
+      "title": "流程定义",
+      "type": "0",
+      "openType": "_iframe",
+      "icon": "layui-icon layui-icon-tree",
+      "href": "view/flow/processList.html",
+      "details": "",
+      "checkArr": ""
+    },
+    {
+      "id": 15,
+      "parentId": 2,
+      "title": "流程实例",
+      "type": "0",
+      "openType": "",
+      "icon": "layui-icon",
+      "href": "view/flow/orderList.html",
+      "details": "",
+      "checkArr": ""
+    },
+    {
+      "id": 16,
+      "parentId": 2,
+      "title": "应用监控",
+      "type": "0",
+      "openType": "_iframe",
+      "icon": "layui-icon layui-icon-auz",
+      "href": "",
+      "details": "",
+      "checkArr": ""
+    },
+    {
+      "id": 17,
+      "parentId": 16,
+      "title": "WebLo",
+      "type": "0",
+      "openType": "_iframe",
+      "icon": "layui-icon layui-icon",
+      "href": "view/system/weblog.html",
+      "details": "",
+      "checkArr": ""
+    },
+    {
+      "id": 18,
+      "parentId": 16,
+      "title": "字典管理",
+      "type": "0",
+      "openType": "_iframe",
+      "icon": "layui-icon",
+      "href": "view/system/dict.html",
+      "details": "",
+      "checkArr": ""
+    }
+  ],
+  "msg": "success",
+  "total": 18
+}

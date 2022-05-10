@@ -105,13 +105,13 @@ func (o *Dept) DeleteHandler(c *gin.Context) {
 }
 
 func DeptRouters(r *gin.RouterGroup) {
-	sysDept := Dept{}
-	r.GET("/dept/list", sysDept.PageHandler)
-	// r.GET("/dept/list/exclude/:id", sysDept.ListExcludeHandler)
-	r.GET("/dept/:id", sysDept.GetHandler)
-	r.GET("/dept/treeselect", sysDept.TreeselectHandler)
-	r.GET("/dept/roleDeptTreeselect/:id", sysDept.RoleDeptTreeselectHandler)
-	r.POST("/dept", sysDept.AddHandler)
-	r.PUT("/dept", sysDept.UpdateHandler)
-	r.DELETE("/dept/:id", sysDept.DeleteHandler)
+	o := Dept{}
+	r.GET("/list", o.PageHandler)
+	// r.GET("/list/exclude/:id", o.ListExcludeHandler)
+	r.GET("/:id", o.GetHandler)
+	r.GET("/treeselect", o.TreeselectHandler)
+	r.GET("/roleDeptTreeselect/:id", o.RoleDeptTreeselectHandler)
+	r.POST("", o.AddHandler)
+	r.PUT("", o.UpdateHandler)
+	r.DELETE("/:id", o.DeleteHandler)
 }

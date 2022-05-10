@@ -3,7 +3,6 @@ module xserver
 go 1.16
 
 require (
-	github.com/BurntSushi/toml v0.3.1
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/gin-gonic/gin v1.7.2
 	github.com/gorilla/websocket v1.4.2
@@ -13,7 +12,6 @@ require (
 	github.com/nats-io/nuid v1.0.1
 	github.com/satori/go.uuid v1.2.0
 	github.com/unrolled/secure v1.0.9
-	github.com/wlgd/xutils v0.0.0-20210805011628-fdcc6c9015ec
+	github.com/wlgd/xutils v0.0.0-20220422090029-c6aebb3ea54a
+	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b
 )
-
-replace github.com/wlgd/xutils => ../xutils

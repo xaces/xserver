@@ -86,9 +86,9 @@ func (o *Company) DeleteHandler(c *gin.Context) {
 
 func CompanyRouters(r *gin.RouterGroup) {
 	o := Company{}
-	r.GET("/company/list", o.ListHandler)
-	r.GET("/company/:id", o.GetHandler)
-	r.POST("/company", o.AddHandler)
-	r.PUT("/company", o.UpdateHandler)
-	r.DELETE("/company/:id", o.DeleteHandler)
+	r.GET("/list", o.ListHandler)
+	r.GET("/:id", o.GetHandler)
+	r.POST("", o.AddHandler)
+	r.PUT("", o.UpdateHandler)
+	r.DELETE("/:id", o.DeleteHandler)
 }

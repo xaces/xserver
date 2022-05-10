@@ -16,13 +16,13 @@ type Dict struct {
 
 // ListHandler 列表
 func (o *Dict) ListHandler(c *gin.Context) {
-	var param service.DictDataPage
-	if err := c.ShouldBind(&param); err != nil {
+	var p service.DictDataPage
+	if err := c.ShouldBind(&p); err != nil {
 		ctx.JSONWriteError(err, c)
 		return
 	}
 	var data []model.SysDictData
-	total, _ := orm.DbByWhere(&model.SysDictData{}, param.Where()).Find(&data)
+	total, _ := orm.DbByWhere(&model.SysDictData{}, p.Where()).Find(&data)
 	ctx.JSONOk().Write(gin.H{"total": total, "data": data}, c)
 }
 
@@ -45,9 +45,9 @@ func (o *Dict) GetHandler(c *gin.Context) {
 
 // DictTypeHandler
 func (o *Dict) DictTypeHandler(c *gin.Context) {
-	dtype := ctx.ParamString(c, "id")
+	dtype := ctx.ParamString(c, "code")
 	var data []model.SysDictData
-	_, err := orm.DbFindBy(&data, "dict_type like ?", dtype)
+	_, err := orm.DbFindBy(&data, "type_code = ?", dtype)
 	if err != nil {
 		ctx.JSONWriteError(err, c)
 		return
@@ -92,15 +92,15 @@ func (o *Dict) UpdateHandler(c *gin.Context) {
 
 // DeleteHandler 删除
 func (o *Dict) DeleteHandler(c *gin.Context) {
-	service.Deletes(&model.SysDictDataOpt{}, c)
+	service.Deletes(&model.SysDictData{}, c)
 }
 
 func DictDataRouters(r *gin.RouterGroup) {
-	sysDict := Dict{}
-	r.GET("/dict/data/list", sysDict.ListHandler)
-	r.GET("/dict/data/:id", sysDict.GetHandler)
-	r.GET("/dict/data/type/:id", sysDict.DictTypeHandler)
-	r.POST("/dict/data", sysDict.AddHandler)
-	r.PUT("/dict/data", sysDict.UpdateHandler)
-	r.DELETE("/dict/data/:id", sysDict.DeleteHandler)
+	o := Dict{}
+	r.GET("/list", o.ListHandler)
+	r.GET("/:id", o.GetHandler)
+	r.GET("/type/:code", o.DictTypeHandler)
+	r.POST("", o.AddHandler)
+	r.PUT("", o.UpdateHandler)
+	r.DELETE("/:id", o.DeleteHandler)
 }
