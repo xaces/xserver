@@ -23,21 +23,6 @@ type Vehicle struct {
 	StationGuid string `json:"stationGuid"` // 工作站guid
 }
 
-// UserPage 查询页
-type UserPage struct {
-	orm.DbPage
-	KeyWord string `form:"keyWord"`
-}
-
-// Where 初始化
-func (s *UserPage) Where() *orm.DbWhere {
-	where := s.DbWhere()
-	if s.KeyWord != "" {
-		where.Append("user_name like ? or nick_name like ?", s.KeyWord, s.KeyWord)
-	}
-	return where
-}
-
 // SysUserPassword 生成密码
 func SysUserPassword(u *model.SysUser, password string) string {
 	if u.Salt == "" {
@@ -73,6 +58,6 @@ func SysUserCreate(u *model.SysUser) error {
 
 func SysUserDevice(t *model.SysUserToken) []Vehicle {
 	var res []Vehicle
-	orm.DB().Model(&model.OprVehicle{}).Where("organize_guid = ?", t.OrganizeGuid).Scan(&res)
+	orm.DB().Model(&model.OprVehicle{}).Where("organize_guid = ?", t.OrganizeGUID).Scan(&res)
 	return res
 }

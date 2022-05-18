@@ -6,21 +6,6 @@ import (
 	"github.com/wlgd/xutils/orm"
 )
 
-// RolePage 查询页
-type RolePage struct {
-	orm.DbPage
-	MenuName string `form:"menuName"` // 菜单名称
-	Visible  string `form:"visible"`  // 菜单状态
-}
-
-// Where 初始化
-func (s *RolePage) Where() *orm.DbWhere {
-	var where orm.DbWhere
-	where.String("menu_name like ?", s.MenuName)
-	where.String("visible = ?", s.Visible)
-	return &where
-}
-
 // SysRoleQueryById 查询指定权限byID
 func SysRoleQueryById(id uint64) (role model.SysRole, err error) {
 	err = orm.DB().Where("id = ?", id).Preload("SysMenus").First(&role).Error

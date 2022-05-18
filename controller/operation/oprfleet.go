@@ -20,19 +20,19 @@ type Fleet struct {
 func (o *Fleet) ListHandler(c *gin.Context) {
 	tok := middleware.GetUserToken(c)
 	var data []model.OprOrganization
-	toatl, _ := orm.DbFindBy(&data, "guid = ?", tok.OrganizeGuid)
-	ctx.JSONOk().Write(gin.H{"total": toatl, "data": data}, c)
+	toatl, _ := orm.DbFindBy(&data, "guid = ?", tok.OrganizeGUID)
+	ctx.JSONWrite(gin.H{"total": toatl, "data": data}, c)
 }
 
 // LisTreeHandler 列表
 func (o *Fleet) LisTreeHandler(c *gin.Context) {
 	tok := middleware.GetUserToken(c)
-	data := service.OprOrganizeTree(tok.OrganizeGuid, nil)
+	data := service.OprOrganizeTree(tok.OrganizeGUID, nil)
 	if data == nil {
 		ctx.JSONWriteError(errors.New("no data"), c)
 		return
 	}
-	ctx.JSONOk().WriteData(data, c)
+	ctx.JSONWriteData(data, c)
 }
 
 // GetHandler 详细
@@ -49,12 +49,12 @@ func (o *Fleet) AddHandler(c *gin.Context) {
 		return
 	}
 	// 获取组织信息, 从数据库
-	p.Guid = middleware.GetUserToken(c).OrganizeGuid
+	p.GUID = middleware.GetUserToken(c).OrganizeGUID
 	if err := orm.DbCreate(&p); err != nil {
 		ctx.JSONWriteError(err, c)
 		return
 	}
-	ctx.JSONOk().WriteTo(c)
+	ctx.JSONOk(c)
 }
 
 // UpdateHandler 修改
@@ -69,7 +69,7 @@ func (o *Fleet) UpdateHandler(c *gin.Context) {
 		ctx.JSONWriteError(err, c)
 		return
 	}
-	ctx.JSONOk().WriteTo(c)
+	ctx.JSONOk(c)
 }
 
 // DeleteHandler 删除

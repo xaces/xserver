@@ -76,7 +76,7 @@ func tokenNext(c *gin.Context, u *model.SysUser) {
 		ctx.JSONWriteError(err, c)
 		return
 	}
-	ctx.JSONOk().WriteData(gin.H{"tokenName": "Token", "tokenValue": token}, c)
+	ctx.JSONWriteData(gin.H{"tokenName": "Token", "tokenValue": token}, c)
 }
 
 // LogoutHandler 注册
@@ -94,16 +94,16 @@ func CaptchaHandler(c *gin.Context) {
 		ctx.JSONWriteError(err, c)
 		return
 	}
-	ctx.JSONOk().WriteData(gin.H{"image": b64s, "uid": id}, c)
+	ctx.JSONWriteData(gin.H{"image": b64s, "uid": id}, c)
 }
 
 // UserInfoHandler 获取用户信息
 func UserInfoHandler(c *gin.Context) {
 	tok := middleware.GetUserToken(c)
 	var user model.SysUser
-	if err := orm.DbFirstById(&user, tok.Id); err != nil {
+	if err := orm.DbFirstById(&user, tok.ID); err != nil {
 		ctx.JSONWriteError(err, c)
 		return
 	}
-	ctx.JSONOk().WriteData(user, c)
+	ctx.JSONWriteData(user, c)
 }

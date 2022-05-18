@@ -23,19 +23,18 @@ type User struct {
 
 // PageHandler 列表
 func (o *User) PageHandler(c *gin.Context) {
-	var param service.UserPage
-	if err := c.ShouldBind(&param); err != nil {
+	var p Where
+	if err := c.ShouldBind(&p); err != nil {
 		ctx.JSONWriteError(err, c)
 		return
 	}
 	tok := middleware.GetUserToken(c)
-	where := param.Where()
 	if tok.UserName != model.SysUserName {
-		where.String("created_by like ?", tok.UserName) // 非管理员用户只能查看自己创建的用户
+		p.createdBy = tok.UserName // 非管理员用户只能查看自己创建的用户
 	}
 	var data []model.SysUser
-	total, _ := orm.DbByWhere(&model.SysUser{}, where).Find(&data)
-	ctx.JSONOk().Write(gin.H{"data": data, "total": total}, c)
+	total, _ := orm.DbByWhere(&model.SysUser{}, p.User()).Find(&data)
+	ctx.JSONWrite(gin.H{"data": data, "total": total}, c)
 }
 
 // GetHandler 查询详细
@@ -51,7 +50,7 @@ func (o *User) GetRolesHandler(c *gin.Context) {
 		ctx.JSONWriteError(err, c)
 		return
 	}
-	ctx.JSONOk().WriteData(roles, c)
+	ctx.JSONWriteData(roles, c)
 }
 
 // AddHandler 新增用户
@@ -63,15 +62,15 @@ func (o *User) AddHandler(c *gin.Context) {
 		return
 	}
 	tok := middleware.GetUserToken(c)
-	p.OrganizeGuid = tok.OrganizeGuid
+	p.OrganizeGUID = tok.OrganizeGUID
 	p.OrganizeName = tok.OrganizeName
 	p.CreatedBy = tok.UserName
-	p.UserType = model.SysUserTypeComm
+	p.Type = model.SysUserTypeComm
 	if err := service.SysUserCreate(&p); err != nil {
 		ctx.JSONWriteError(err, c)
 		return
 	}
-	ctx.JSONOk().WriteTo(c)
+	ctx.JSONOk(c)
 }
 
 // EnableHandler 改变状态
@@ -81,18 +80,18 @@ func (o *User) EnableHandler(c *gin.Context) {
 		ctx.JSONWriteError(err, c)
 		return
 	}
-	if err := orm.DbUpdateColById(&p, p.Id, "enable", p.Enable); err != nil {
+	if err := orm.DbUpdateColById(&p, p.ID, "enable", p.Enable); err != nil {
 		ctx.JSONWriteError(err, c)
 		return
 	}
-	ctx.JSONOk().WriteTo(c)
+	ctx.JSONOk(c)
 }
 
 // ExportHandler 导出
 func (o *User) ExportHandler(c *gin.Context) {
 	// var users []model.SysUser
 	// totalCount, err := orm.DbFindPage(param.PageNum, param.PageSize, param.Where(sysUser), &model.SysUser{}, &users)
-	ctx.JSON(ctx.StatusError).WriteTo(c)
+	ctx.JSONError(c)
 }
 
 type updatePwd struct {
@@ -104,13 +103,13 @@ type updatePwd struct {
 func (o *User) ProfileHandler(c *gin.Context) {
 	tok := middleware.GetUserToken(c)
 	var data model.SysUser
-	if err := orm.DbFirstById(&data, tok.Id); err != nil {
+	if err := orm.DbFirstById(&data, tok.ID); err != nil {
 		ctx.JSONWriteError(err, c)
 		return
 	}
-	u := cache.NewDevUser(data.Id, data.DeviceIds)
+	u := cache.NewDevUser(data.ID, data.DeviceIds)
 	u.Val.Clear()
-	ctx.JSONOk().WriteData(data, c)
+	ctx.JSONWriteData(data, c)
 }
 
 // UpdatePwdHandler 重置密码
@@ -122,7 +121,7 @@ func (o *User) UpdatePwdHandler(c *gin.Context) {
 	}
 	tok := middleware.GetUserToken(c)
 	var data model.SysUser
-	if err := orm.DbFirstById(&data, tok.Id); err != nil {
+	if err := orm.DbFirstById(&data, tok.ID); err != nil {
 		ctx.JSONWriteError(err, c)
 		return
 	}
@@ -132,11 +131,11 @@ func (o *User) UpdatePwdHandler(c *gin.Context) {
 		return
 	}
 	newPassword := service.SysUserPassword(&data, p.NewPassword)
-	if err := orm.DbUpdateColById(&data, data.Id, "password", newPassword); err != nil {
+	if err := orm.DbUpdateColById(&data, data.ID, "password", newPassword); err != nil {
 		ctx.JSONWriteError(err, c)
 		return
 	}
-	ctx.JSONOk().WriteTo(c)
+	ctx.JSONOk(c)
 }
 
 // ProfileAuatarHandler 上传头像
@@ -155,11 +154,11 @@ func (o *User) ProfileAuatarHandler(c *gin.Context) {
 		return
 	}
 	avatarURL := dts
-	if err := orm.DbUpdateColById(&model.SysUser{}, tok.Id, "avatar", avatarURL); err != nil {
+	if err := orm.DbUpdateColById(&model.SysUser{}, tok.ID, "avatar", avatarURL); err != nil {
 		ctx.JSONWriteError(err, c)
 		return
 	}
-	ctx.JSONOk().WriteTo(c)
+	ctx.JSONOk(c)
 }
 
 // UpdateHandler 修改
@@ -170,13 +169,13 @@ func (o *User) UpdateHandler(c *gin.Context) {
 		return
 	}
 	if data.UserName == model.SysUserName {
-		data.RoleId = model.SysUserRoleId
+		data.RoleID = model.SysUserRoleId
 	}
 	if err := orm.DbUpdateModel(data); err != nil {
 		ctx.JSONWriteError(err, c)
 		return
 	}
-	ctx.JSONOk().WriteTo(c)
+	ctx.JSONOk(c)
 }
 
 // ResetPwdHandler 修改密码
@@ -192,7 +191,7 @@ func (o *User) ResetPwdHandler(c *gin.Context) {
 		ctx.JSONWriteError(err, c)
 		return
 	}
-	ctx.JSONOk().WriteTo(c)
+	ctx.JSONOk(c)
 }
 
 // DeleteHandler 删除
@@ -243,7 +242,7 @@ func (o *User) DeviceTreeHandler(c *gin.Context) {
 	devs := service.SysUserDevice(t)
 	// 过滤用户数据
 	var data []service.Vehicle
-	u := cache.UserDevs(t.Id)
+	u := cache.UserDevs(t.ID)
 	if u != nil && devs != nil {
 		for _, v := range devs {
 			if u.DeviceIds == "*" {
@@ -254,8 +253,8 @@ func (o *User) DeviceTreeHandler(c *gin.Context) {
 			data = append(data, v)
 		}
 	}
-	tree := service.OprOrganizeTree(t.OrganizeGuid, data)
-	ctx.JSONOk().WriteData(tree, c)
+	tree := service.OprOrganizeTree(t.OrganizeGUID, data)
+	ctx.JSONWriteData(tree, c)
 }
 
 type devicelist struct {
@@ -273,14 +272,14 @@ func (o *User) DevicesHandler(c *gin.Context) {
 	t := middleware.GetUserToken(c)
 	devs := service.SysUserDevice(t)
 	// 过滤用户数据
-	u := cache.UserDevs(t.Id)
+	u := cache.UserDevs(t.ID)
 	if u == nil || devs == nil {
-		ctx.JSONOk().WriteTo(c)
+		ctx.JSONOk(c)
 		return
 	}
 	if u.DeviceIds == "*" {
-		tree := service.OprOrganizeTree(t.OrganizeGuid, devs)
-		ctx.JSONOk().WriteData(tree, c)
+		tree := service.OprOrganizeTree(t.OrganizeGUID, devs)
+		ctx.JSONWriteData(tree, c)
 		return
 	}
 	var data []service.Vehicle
@@ -292,7 +291,7 @@ func (o *User) DevicesHandler(c *gin.Context) {
 		}
 		data = append(data, v)
 	}
-	ctx.JSONOk().WriteData(data, c)
+	ctx.JSONWriteData(data, c)
 }
 
 func UserRouters(r *gin.RouterGroup) {

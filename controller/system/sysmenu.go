@@ -16,14 +16,14 @@ type Menu struct {
 
 // ListHandler 列表
 func (o *Menu) ListHandler(c *gin.Context) {
-	var param service.MenuPage
-	if err := c.ShouldBind(&param); err != nil {
+	var p Where
+	if err := c.ShouldBind(&p); err != nil {
 		ctx.JSONWriteError(err, c)
 		return
 	}
 	var data []model.SysMenu
-	total, _ := orm.DbByWhere(&model.SysMenu{}, param.Where()).Find(&data)
-	ctx.JSONOk().Write(gin.H{"total": total, "data": data}, c)
+	total, _ := orm.DbByWhere(&model.SysMenu{}, p.Where()).Find(&data)
+	ctx.JSONWrite(gin.H{"total": total, "data": data}, c)
 }
 
 // GetHandler 查询详细
@@ -42,7 +42,7 @@ func (o *Menu) AddHandler(c *gin.Context) {
 		ctx.JSONWriteError(err, c)
 		return
 	}
-	ctx.JSONOk().WriteTo(c)
+	ctx.JSONOk(c)
 }
 
 // UpdateHandler 修改
@@ -56,7 +56,7 @@ func (o *Menu) UpdateHandler(c *gin.Context) {
 		ctx.JSONWriteError(err, c)
 		return
 	}
-	ctx.JSONOk().WriteTo(c)
+	ctx.JSONOk(c)
 }
 
 // DeleteHandler 删除oo

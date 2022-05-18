@@ -1,9 +1,9 @@
 package model
 
 type OprOrganizationOpt struct {
-	Id       uint   `json:"id" gorm:"primary_key"` //
+	ID       uint   `json:"id" gorm:"primary_key"` //
 	Name     string `json:"name"`                  // 名称
-	ParentId uint   `json:"parentId"`
+	ParentID uint   `json:"parentId"`
 	Enable   bool   `json:"enable" gorm:"default:1;comment:0禁用 1启动;"`
 	UserName string `json:"username"` // 管理账号
 	Details  string `json:"details"`
@@ -11,9 +11,9 @@ type OprOrganizationOpt struct {
 
 type OprOrganization struct {
 	OprOrganizationOpt
-	Guid      string `json:"guid"`
-	CreatedAt jtime  `json:"createTime" gorm:"column:created_time;"`
-	CreatedBy string `json:"createBy" gorm:"comment:创建者;"`
+	GUID      string `json:"guid"`
+	CreatedAt jtime  `json:"createdAt"`
+	CreatedBy string `json:"createdBy" gorm:"comment:创建者;"`
 }
 
 // 第一级组织默认为公司

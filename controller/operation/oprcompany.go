@@ -28,7 +28,7 @@ func (o *Company) ListHandler(c *gin.Context) {
 	where.Append("guid != ?", "")
 	var data []model.OprOrganization
 	toatl, _ := orm.DbByWhere(&model.OprOrganization{}, where).Find(&data)
-	ctx.JSONOk().Write(gin.H{"total": toatl, "data": data}, c)
+	ctx.JSONWrite(gin.H{"total": toatl, "data": data}, c)
 }
 
 // GetHandler 详细
@@ -44,14 +44,14 @@ func (o *Company) AddHandler(c *gin.Context) {
 		ctx.JSONWriteError(err, c)
 		return
 	}
-	p.Guid = util.NUID()
+	p.GUID = util.NUID()
 	tok := middleware.GetUserToken(c)
 	u := &model.SysUser{}
 	u.UserName = p.UserName
 	u.CreatedBy = tok.UserName
 	u.OrganizeName = p.Name
-	u.UserType = model.SysUserTypeAdmin
-	u.OrganizeGuid = p.Guid
+	u.Type = model.SysUserTypeAdmin
+	u.OrganizeGUID = p.GUID
 	u.DeviceIds = "*"
 	if err := service.SysUserCreate(u); err != nil {
 		ctx.JSONWriteError(err, c)
@@ -61,7 +61,7 @@ func (o *Company) AddHandler(c *gin.Context) {
 		ctx.JSONWriteError(err, c)
 		return
 	}
-	ctx.JSONOk().WriteTo(c)
+	ctx.JSONOk(c)
 }
 
 // UpdateHandler 修改
@@ -76,7 +76,7 @@ func (o *Company) UpdateHandler(c *gin.Context) {
 		ctx.JSONWriteError(err, c)
 		return
 	}
-	ctx.JSONOk().WriteTo(c)
+	ctx.JSONOk(c)
 }
 
 // DeleteHandler 删除

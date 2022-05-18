@@ -18,16 +18,15 @@ type Vehicle struct {
 }
 
 func (o *Vehicle) ListHandler(c *gin.Context) {
-	var p service.VehiclePage
+	var p Where
 	if err := c.ShouldBind(&p); err != nil {
 		ctx.JSONWriteError(err, c)
 		return
 	}
-	w := p.Where()
-	w.Append("organize_guid = ?", middleware.GetUserToken(c).OrganizeGuid)
+	p.OrganizeGUID = middleware.GetUserToken(c).OrganizeGUID
 	var data []model.OprVehicle
-	total, _ := orm.DbByWhere(&data, w).Find(&data)
-	ctx.JSONOk().Write(gin.H{"total": total, "data": data}, c)
+	total, _ := orm.DbByWhere(&data, p.Vehicle()).Find(&data)
+	ctx.JSONWrite(gin.H{"total": total, "data": data}, c)
 }
 
 // GetHandler 获取指定id
@@ -43,13 +42,13 @@ func (o *Vehicle) AddHandler(c *gin.Context) {
 		ctx.JSONWriteError(err, c)
 		return
 	}
-	p.Guid = util.UUID()
-	p.OrganizeGuid = middleware.GetUserToken(c).OrganizeGuid
+	p.GUID = util.UUID()
+	p.OrganizeGUID = middleware.GetUserToken(c).OrganizeGUID
 	if err := orm.DbCreate(&p); err != nil {
 		ctx.JSONWriteError(err, c)
 		return
 	}
-	ctx.JSONOk().WriteTo(c)
+	ctx.JSONOk(c)
 }
 
 type batchAdd struct {
@@ -75,15 +74,15 @@ func (o *Vehicle) BatchAddHandler(c *gin.Context) {
 		v.OprVehicleOpt = p.OprVehicleOpt
 		v.DeviceNo = fmt.Sprintf("%s%0*d", p.Prefix, lzero, p.StartNumber+i)
 		v.DeviceName = v.DeviceNo
-		v.Guid = util.UUID()
-		v.OrganizeGuid = t.OrganizeGuid
+		v.GUID = util.UUID()
+		v.OrganizeGUID = t.OrganizeGUID
 		data = append(data, v)
 	}
 	if err := orm.DbCreate(&data); err != nil {
 		ctx.JSONWriteError(err, c)
 		return
 	}
-	ctx.JSONOk().WriteTo(c)
+	ctx.JSONOk(c)
 }
 
 // UpdateHandler 修改
@@ -98,7 +97,7 @@ func (o *Vehicle) UpdateHandler(c *gin.Context) {
 		ctx.JSONWriteError(err, c)
 		return
 	}
-	ctx.JSONOk().WriteTo(c)
+	ctx.JSONOk(c)
 }
 
 // resetOrganize 更新
@@ -119,7 +118,7 @@ func (o *Vehicle) ResetOrganizeHandler(c *gin.Context) {
 		ctx.JSONWriteError(err, c)
 		return
 	}
-	ctx.JSONOk().WriteTo(c)
+	ctx.JSONOk(c)
 }
 
 // DeleteHandler 删除

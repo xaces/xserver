@@ -16,11 +16,11 @@ const (
 )
 
 type SysUserToken struct {
-	Id           uint   `json:"userId" gorm:"primary_key"`
+	ID           uint   `json:"userId" gorm:"primary_key"`
 	UserName     string `json:"username" gorm:"not null;comment:登录账号;"`
-	RoleId       uint   `json:"roleId"`
-	DeptId       JUints `json:"deptIds"`
-	OrganizeGuid string `json:"organizeGuid" gorm:"default:'';"`
+	RoleID       uint   `json:"roleId"`
+	DeptID       JUints `json:"deptIds"`
+	OrganizeGUID string `json:"organizeGuid" gorm:"default:'';"`
 	OrganizeName string `json:"organizeName"`
 }
 
@@ -28,7 +28,7 @@ type SysUserToken struct {
 type SysUserOpt struct {
 	SysUserToken
 	NickName  string `json:"nickname" gorm:"not null;comment:用户昵称;"`
-	UserType  int    `json:"userType"`
+	Type      int    `json:"userType"`
 	DeviceIds string `json:"deviceIds"` // *,代表所有， 1,2,3
 	Email     string `json:"email" gorm:"comment:用户邮箱;"`
 	Phone     string `json:"phone" gorm:"size:11;default:'';comment:手机号码;"`
@@ -49,8 +49,8 @@ type SysUserOpt struct {
 type SysUser struct {
 	SysUserOpt
 	Login     uint8  `json:"login" gorm:"default:1;comment:0在线 1离线;"`
-	CreatedAt jtime  `json:"createTime" gorm:"column:created_time;"`
-	CreatedBy string `json:"createBy" gorm:"comment:创建者;"`
+	CreatedAt jtime  `json:"createdAt"`
+	CreatedBy string `json:"createdBy" gorm:"comment:创建者;"`
 }
 
 func (o *SysUser) TableName() string {

@@ -24,7 +24,7 @@ func (o *File) ListHandler(c *gin.Context) {
 	}
 	var data []model.SysFile
 	total, _ := orm.DbByWhere(&model.SysFile{}, p.DbWhere()).Find(&data)
-	ctx.JSONOk().Write(gin.H{"total": total, "data": data}, c)
+	ctx.JSONWrite(gin.H{"total": total, "data": data}, c)
 }
 
 // GetHandler 查询详细
@@ -44,7 +44,7 @@ func (o *File) AddHandler(c *gin.Context) {
 		ctx.JSONWriteError(err, c)
 		return
 	}
-	ctx.JSONOk().WriteTo(c)
+	ctx.JSONOk(c)
 }
 
 // UpdateHandler 修改
@@ -59,7 +59,7 @@ func (o *File) UpdateHandler(c *gin.Context) {
 		ctx.JSONWriteError(err, c)
 		return
 	}
-	ctx.JSONOk().WriteTo(c)
+	ctx.JSONOk(c)
 }
 
 // DeleteHandler 删除
@@ -82,11 +82,11 @@ func (o *File) UploadHandler(c *gin.Context) {
 	tok := middleware.GetUserToken(c)
 	data := &model.SysFile{
 		SysFileOpt: model.SysFileOpt{
-			FileName: fileHead.Filename,
-			FilePath: filename,
-			FileSize: fileHead.Size,
-			FileDesc: fileHead.Filename,
-			FileType: fileHead.Filename,
+			Name: fileHead.Filename,
+			Path: filename,
+			Size: fileHead.Size,
+			Desc: fileHead.Filename,
+			Type: fileHead.Filename,
 		},
 		CreatedBy: tok.UserName,
 	}
@@ -94,11 +94,11 @@ func (o *File) UploadHandler(c *gin.Context) {
 		ctx.JSONWriteError(err, c)
 		return
 	}
-	ctx.JSONOk().WriteTo(c)
+	ctx.JSONOk(c)
 }
 
 func (o *File) DownloadHandler(c *gin.Context) {
-	filename := ctx.ParamString(c, "file")
+	filename := c.Param("file")
 	c.File(filename)
 }
 

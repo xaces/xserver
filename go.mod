@@ -12,6 +12,7 @@ require (
 	github.com/nats-io/nuid v1.0.1
 	github.com/satori/go.uuid v1.2.0
 	github.com/unrolled/secure v1.0.9
-	github.com/wlgd/xutils v0.0.0-20220422090029-c6aebb3ea54a
-	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b
+	github.com/wlgd/xutils v0.0.0-00010101000000-000000000000
 )
+
+replace github.com/wlgd/xutils => ../xutils

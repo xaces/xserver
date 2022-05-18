@@ -5,8 +5,8 @@ import (
 	"xserver/app/db"
 	"xserver/configs"
 	"xserver/model"
-	"xserver/util"
 
+	"github.com/wlgd/xutils"
 	"github.com/wlgd/xutils/orm"
 )
 
@@ -15,7 +15,7 @@ type jsonMenu struct {
 }
 
 func main() {
-	if err := configs.Load("../../.config.yaml"); err != nil {
+	if err := configs.Load(".config.yaml"); err != nil {
 		log.Fatalln(err)
 	}
 	if err := db.Run(&configs.Default.Sql); err != nil {
@@ -24,7 +24,7 @@ func main() {
 
 	if orm.DbCount(&model.SysMenu{}, nil) < 1 {
 		var v jsonMenu
-		if err := util.JSONFile("../../conf/menu.json", &v); err != nil {
+		if err := xutils.JSONFile("conf/menu.json", &v); err != nil {
 			log.Println(err)
 		} else {
 			orm.DB().Create(&v.Data)

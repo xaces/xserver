@@ -20,8 +20,8 @@ type Station struct {
 func (o *Station) ListHandler(c *gin.Context) {
 	tok := middleware.GetUserToken(c)
 	var data []model.SysTation
-	toatl, _ := orm.DbFindBy(&data, "organize_guid = ?", tok.OrganizeGuid)
-	ctx.JSONOk().Write(gin.H{"total": toatl, "data": data}, c)
+	toatl, _ := orm.DbFindBy(&data, "organize_guid = ?", tok.OrganizeGUID)
+	ctx.JSONWrite(gin.H{"total": toatl, "data": data}, c)
 }
 
 // GetHandler 详细
@@ -37,13 +37,13 @@ func (o *Station) AddHandler(c *gin.Context) {
 		return
 	}
 	t := middleware.GetUserToken(c)
-	p.Guid = util.NUID()
-	p.OrganizeGuid = t.OrganizeGuid
+	p.GUID = util.NUID()
+	p.OrganizeGUID = t.OrganizeGUID
 	if err := orm.DbCreate(&p); err != nil {
 		ctx.JSONWriteError(err, c)
 		return
 	}
-	ctx.JSONOk().WriteTo(c)
+	ctx.JSONOk(c)
 }
 
 // UpdateHandler 修改
@@ -57,7 +57,7 @@ func (o *Station) UpdateHandler(c *gin.Context) {
 		ctx.JSONWriteError(err, c)
 		return
 	}
-	ctx.JSONOk().WriteTo(c)
+	ctx.JSONOk(c)
 }
 
 // DeleteHandler 删除

@@ -9,7 +9,7 @@ import (
 )
 
 func Deletes(v interface{}, c *gin.Context) {
-	idstr := ctx.ParamString(c, "id")
+	idstr := c.Param("id")
 	if idstr != "" {
 		ids := util.StringToIntSlice(idstr, ",")
 		if err := orm.DbDeleteByIds(v, ids); err != nil {
@@ -17,7 +17,7 @@ func Deletes(v interface{}, c *gin.Context) {
 			return
 		}
 	}
-	ctx.JSONOk().WriteTo(c)
+	ctx.JSONOk(c)
 }
 
 func QueryById(v interface{}, c *gin.Context) {
@@ -26,5 +26,5 @@ func QueryById(v interface{}, c *gin.Context) {
 		ctx.JSONWriteError(err, c)
 		return
 	}
-	ctx.JSONOk().WriteData(v, c)
+	ctx.JSONWriteData(v, c)
 }

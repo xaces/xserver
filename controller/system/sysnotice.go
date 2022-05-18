@@ -23,7 +23,7 @@ func (o *Notice) ListHandler(c *gin.Context) {
 	}
 	var data []model.SysNotice
 	total, _ := orm.DbByWhere(&model.SysNotice{}, p.DbWhere()).Find(&data)
-	ctx.JSONOk().Write(gin.H{"total": total, "data": data}, c)
+	ctx.JSONWrite(gin.H{"total": total, "data": data}, c)
 }
 
 // GetHandler 详细
@@ -43,7 +43,7 @@ func (o *Notice) AddHandler(c *gin.Context) {
 		ctx.JSONWriteError(err, c)
 		return
 	}
-	ctx.JSONOk().WriteTo(c)
+	ctx.JSONOk(c)
 }
 
 // UpdateHandler 修改
@@ -58,7 +58,7 @@ func (o *Notice) UpdateHandler(c *gin.Context) {
 		ctx.JSONWriteError(err, c)
 		return
 	}
-	ctx.JSONOk().WriteTo(c)
+	ctx.JSONOk(c)
 }
 
 // DeleteHandler 删除

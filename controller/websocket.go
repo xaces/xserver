@@ -55,7 +55,7 @@ func WsHandler(c *gin.Context) {
 		ctx.JSONWriteError(errors.New("subscribe server"), c)
 		return
 	}
-	go msgHandler(claims.SysUserToken.Id, ws, msgChan)
+	go msgHandler(claims.SysUserToken.ID, ws, msgChan)
 	for {
 		mt, message, err := ws.ReadMessage()
 		if err != nil {

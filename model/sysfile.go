@@ -1,20 +1,20 @@
 package model
 
 type SysFileOpt struct {
-	Id         uint   `json:"fileId" gorm:"primary_key"`
-	FileName   string `json:"fileName"`
-	FilePath   string `json:"filePath"`
-	FileType   string `json:"fileType"`
-	FileSize   int64  `json:"fileSize"`
-	FileDesc   string `json:"fileDesc"`
+	ID         uint   `json:"fileId" gorm:"primary_key"`
+	Name       string `json:"fileName"`
+	Path       string `json:"filePath"`
+	Type       string `json:"fileType"`
+	Size       int64  `json:"fileSize"`
+	Desc       string `json:"fileDesc"`
 	TargetDate string `json:"targetDate"`
 }
 
 // SysFile
 type SysFile struct {
 	SysFileOpt
-	CreatedAt jtime  `json:"createTime" gorm:"column:created_time;"`
-	CreatedBy string `json:"createBy" gorm:"comment:创建者;"`
+	CreatedAt jtime  `json:"createdAt"`
+	CreatedBy string `json:"createdBy" gorm:"comment:创建者;"`
 }
 
 func (o *SysFile) TableName() string {

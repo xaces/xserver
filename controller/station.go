@@ -28,12 +28,12 @@ func ProxyHandler(uri string) gin.HandlerFunc {
 }
 
 func DevicesHandler(c *gin.Context) {
-	guid := ctx.ParamString(c, "guid")
+	guid := c.Param("guid")
 	if cache.SysTation(guid) == nil {
 		ctx.JSONWriteError(errors.New("invalid station"), c)
 		return
 	}
 	var vehis []model.OprVehicle
 	orm.DbFindBy(&vehis, "station_guid = ?", guid)
-	ctx.JSONOk().WriteData(vehis, c)
+	ctx.JSONWriteData(vehis, c)
 }

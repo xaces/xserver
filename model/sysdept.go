@@ -2,8 +2,8 @@ package model
 
 // SysDept
 type SysDeptOpt struct {
-	Id       uint   `json:"deptId" gorm:"primary_key"`
-	ParentId uint   `json:"parentId"`
+	ID       uint   `json:"deptId" gorm:"primary_key"`
+	ParentID uint   `json:"parentId"`
 	DeptName string `json:"deptName"`
 	Address  string `json:"address"`
 	Leader   string `json:"leader"`
@@ -15,7 +15,7 @@ type SysDeptOpt struct {
 
 type SysDept struct {
 	SysDeptOpt
-	CreatedAt jtime     `json:"createTime" gorm:"column:created_time;"`
+	CreatedAt jtime     `json:"createdAt"`
 	Children  []SysDept `json:"children,omitempty" gorm:"-"`
 }
 

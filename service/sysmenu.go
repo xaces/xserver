@@ -1,18 +1,14 @@
 package service
 
-import "github.com/wlgd/xutils/orm"
+import "xserver/model"
 
-// menuPage 查询页
-type MenuPage struct {
-	orm.DbPage
-	MenuName string `form:"menuName"` // 菜单名称
-	Visible  string `form:"visible"`  // 菜单状态
-}
-
-// Where 初始化
-func (s *MenuPage) Where() *orm.DbWhere {
-	var where orm.DbWhere
-	where.String("menu_name like ?", s.MenuName)
-	where.String("visible = ?", s.Visible)
-	return &where
+func SysMenuTree(data []model.SysMenu, id uint) (tree []model.SysMenu) {
+	for _, v := range data {
+		if v.ParentID != id {
+			continue
+		}
+		v.FindChildren(data)
+		tree = append(tree, v)
+	}
+	return
 }

@@ -4,7 +4,8 @@ import (
 	"fmt"
 	"xserver/app/db"
 	"xserver/app/router"
-	"xserver/util"
+
+	"github.com/wlgd/xutils"
 )
 
 type localConfigure struct {
@@ -24,7 +25,7 @@ var (
 
 // Load 初始化配置参数
 func Load(filename string) error {
-	if err := util.YamlFile(filename, &Default); err != nil {
+	if err := xutils.YAMLFile(filename, &Default); err != nil {
 		return err
 	}
 	Local.Address = fmt.Sprintf("%s:%d/%s", Default.Host, Default.Http.Port, Default.Http.Root)

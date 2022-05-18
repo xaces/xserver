@@ -17,19 +17,18 @@ type Role struct {
 
 // PageHandler 列表
 func (o *Role) PageHandler(c *gin.Context) {
-	var p service.RolePage
+	var p Where
 	if err := c.ShouldBind(&p); err != nil {
 		ctx.JSONWriteError(err, c)
 		return
 	}
 	tok := middleware.GetUserToken(c)
-	where := p.Where()
-	if tok.RoleId != model.SysUserRoleId {
-		where.Append("created_by like ?", tok.UserName) // 非管理员只能获取当前用户创建的的角色
+	if tok.RoleID != model.SysUserRoleId {
+		p.createdBy = tok.UserName
 	}
 	var data []model.SysRole
-	total, _ := orm.DbByWhere(&model.SysRole{}, where).Find(&data)
-	ctx.JSONOk().Write(gin.H{"total": total, "data": data}, c)
+	total, _ := orm.DbByWhere(&model.SysRole{}, p.Role()).Find(&data)
+	ctx.JSONWrite(gin.H{"total": total, "data": data}, c)
 }
 
 // GetHandler 查询
@@ -49,7 +48,7 @@ func (o *Role) GetRolePowerHandler(c *gin.Context) {
 		ctx.JSONWriteError(err, c)
 		return
 	}
-	locRoleId := middleware.GetUserToken(c).RoleId
+	locRoleId := middleware.GetUserToken(c).RoleID
 	var menus []model.SysMenu
 	if locRoleId != model.SysUserRoleId {
 		var locRole model.SysRole
@@ -62,7 +61,7 @@ func (o *Role) GetRolePowerHandler(c *gin.Context) {
 		orm.DbFind(&menus)
 	}
 	// roles 查询用户权限 menus当前登录用户全面
-	ctx.JSONOk().WriteData(gin.H{"menuIds": p.MenuIds, "menus": menus}, c)
+	ctx.JSONWriteData(gin.H{"menuIds": p.MenuIds, "menus": menus}, c)
 }
 
 // AddHandler 新增
@@ -77,7 +76,7 @@ func (o *Role) AddHandler(c *gin.Context) {
 		ctx.JSONWriteError(err, c)
 		return
 	}
-	ctx.JSONOk().WriteTo(c)
+	ctx.JSONOk(c)
 }
 
 // UpdateHandler 修改
@@ -88,11 +87,11 @@ func (o *Role) UpdateHandler(c *gin.Context) {
 		return
 	}
 	// 更新数据
-	if err := orm.DbUpdateById(p, p.Id); err != nil {
+	if err := orm.DbUpdateById(p, p.ID); err != nil {
 		ctx.JSONWriteError(err, c)
 		return
 	}
-	ctx.JSONOk().WriteTo(c)
+	ctx.JSONOk(c)
 }
 
 // EnableHandler 改变状态
@@ -103,11 +102,11 @@ func (o *Role) EnableHandler(c *gin.Context) {
 		ctx.JSONWriteError(err, c)
 		return
 	}
-	if err := orm.DbUpdateColById(model.SysRole{}, p.Id, "enable", p.Enable); err != nil {
+	if err := orm.DbUpdateColById(model.SysRole{}, p.ID, "enable", p.Enable); err != nil {
 		ctx.JSONWriteError(err, c)
 		return
 	}
-	ctx.JSONOk().WriteTo(c)
+	ctx.JSONOk(c)
 }
 
 // DeleteHandler 删除

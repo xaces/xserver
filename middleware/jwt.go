@@ -120,7 +120,7 @@ func JWTAuth() gin.HandlerFunc {
 			// 	c.Abort()
 			// 	return
 			// }
-			ctx.JSON(ctx.StatusLoginExpired).SetMsg(err.Error()).WriteTo(c)
+			ctx.JSON(ctx.StatusLoginExpired).SetMsg(err.Error()).WriteData(nil, c)
 			c.Abort()
 			return
 		}

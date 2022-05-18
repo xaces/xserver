@@ -16,14 +16,14 @@ type DictType struct {
 
 // ListHandler 列表
 func (o *DictType) ListHandler(c *gin.Context) {
-	var p service.DictTypePage
+	var p Where
 	if err := c.ShouldBind(&p); err != nil {
 		ctx.JSONWriteError(err, c)
 		return
 	}
 	var data []model.SysDictType
 	total, _ := orm.DbByWhere(&model.SysDictType{}, p.Where()).Find(&data)
-	ctx.JSONOk().Write(gin.H{"total": total, "data": data}, c)
+	ctx.JSONWrite(gin.H{"total": total, "data": data}, c)
 }
 
 // GetHandler 详细
@@ -43,7 +43,7 @@ func (o *DictType) AddHandler(c *gin.Context) {
 		ctx.JSONWriteError(err, c)
 		return
 	}
-	ctx.JSONOk().WriteTo(c)
+	ctx.JSONOk(c)
 }
 
 // UpdateHandler 修改
@@ -58,7 +58,7 @@ func (o *DictType) UpdateHandler(c *gin.Context) {
 		ctx.JSONWriteError(err, c)
 		return
 	}
-	ctx.JSONOk().WriteTo(c)
+	ctx.JSONOk(c)
 }
 
 // DeleteHandler 删除

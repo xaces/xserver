@@ -15,7 +15,7 @@ type SysNoticeOpt struct {
 // SysNotice
 type SysNotice struct {
 	SysNoticeOpt
-	CreatedAt jtime `json:"createTime" gorm:"column:created_time;"`
+	CreatedAt jtime `json:"createdAt"`
 }
 
 func (o *SysNotice) TableName() string {

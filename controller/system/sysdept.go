@@ -17,14 +17,14 @@ type Dept struct {
 
 // PageHandler 列表
 func (o *Dept) PageHandler(c *gin.Context) {
-	var param service.DeptPage
-	if err := c.ShouldBind(&param); err != nil {
+	var p Where
+	if err := c.ShouldBind(&p); err != nil {
 		ctx.JSONWriteError(err, c)
 		return
 	}
 	var data []model.SysDept
-	total, _ := orm.DbByWhere(&model.SysDept{}, param.Where()).Find(&data)
-	ctx.JSONOk().Write(gin.H{"total": total, "data": data}, c)
+	total, _ := orm.DbByWhere(&model.SysDept{}, p.Where()).Find(&data)
+	ctx.JSONWrite(gin.H{"total": total, "data": data}, c)
 }
 
 // ListExcludeHandler 列表（排除节点）
@@ -36,7 +36,7 @@ func (o *Dept) ListExcludeHandler(c *gin.Context) {
 	// where := fmt.Sprintf("id != %d", id)
 	// var depts []model.Dept
 	// orm.DbFindAll(where, depts, "order_num asc")
-	ctx.JSONOk().WriteTo(c)
+	ctx.JSONOk(c)
 }
 
 // GetHandler 查询详细
@@ -55,7 +55,7 @@ func (o *Dept) TreeselectHandler(c *gin.Context) {
 
 // RoleDeptTreeselectHandler 根据角色ID查询树结构
 func (o *Dept) RoleDeptTreeselectHandler(c *gin.Context) {
-	ctx.JSONOk().WriteTo(c)
+	ctx.JSONOk(c)
 }
 
 func checkAddDept(req *model.SysDept) error {
@@ -82,7 +82,7 @@ func (o *Dept) AddHandler(c *gin.Context) {
 		ctx.JSONWriteError(err, c)
 		return
 	}
-	ctx.JSONOk().WriteTo(c)
+	ctx.JSONOk(c)
 }
 
 // UpdateHandler 修改
@@ -96,7 +96,7 @@ func (o *Dept) UpdateHandler(c *gin.Context) {
 		ctx.JSONWriteError(err, c)
 		return
 	}
-	ctx.JSONOk().WriteTo(c)
+	ctx.JSONOk(c)
 }
 
 // DeleteHandler 删除
