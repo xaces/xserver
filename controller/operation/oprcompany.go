@@ -6,8 +6,8 @@ import (
 	"xserver/service"
 	"xserver/util"
 
-	"github.com/wlgd/xutils/ctx"
-	"github.com/wlgd/xutils/orm"
+	"github.com/xaces/xutils/ctx"
+	"github.com/xaces/xutils/orm"
 
 	"github.com/gin-gonic/gin"
 )
@@ -23,17 +23,17 @@ func (o *Company) ListHandler(c *gin.Context) {
 		ctx.JSONWriteError(err, c)
 		return
 	}
-	where := p.DbWhere()
-	where.Append("parent_id = ?", 0) // 上级节点为0，表示公司
-	where.Append("guid != ?", "")
+	w := p.DbWhere()
+	w.Equal("parent_id", 0) // 上级节点为0，表示公司
+	w.Where("guid != ?", "")
 	var data []model.OprOrganization
-	toatl, _ := orm.DbByWhere(&model.OprOrganization{}, where).Find(&data)
+	toatl, _ := w.Model(&model.OprOrganization{}).Find(&data)
 	ctx.JSONWrite(gin.H{"total": toatl, "data": data}, c)
 }
 
 // GetHandler 详细
 func (o *Company) GetHandler(c *gin.Context) {
-	service.QueryById(&model.OprOrganization{}, c)
+	service.QueryByID(&model.OprOrganization{}, c)
 }
 
 // AddHandler 新增
@@ -84,8 +84,7 @@ func (o *Company) DeleteHandler(c *gin.Context) {
 	service.Deletes(&model.OprOrganization{}, c)
 }
 
-func CompanyRouters(r *gin.RouterGroup) {
-	o := Company{}
+func (o Company) Routers(r *gin.RouterGroup) {
 	r.GET("/list", o.ListHandler)
 	r.GET("/:id", o.GetHandler)
 	r.POST("", o.AddHandler)

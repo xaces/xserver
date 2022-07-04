@@ -3,7 +3,7 @@ package cache
 import (
 	"xserver/model"
 
-	"github.com/wlgd/xutils/orm"
+	"github.com/xaces/xutils/orm"
 )
 
 var (

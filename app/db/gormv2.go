@@ -1,18 +1,23 @@
 package db
 
 import (
+	"xserver/configs"
 	"xserver/model"
 
-	"github.com/wlgd/xutils/orm"
+	"github.com/xaces/xutils/orm"
 )
 
-type Options struct {
+type options struct {
 	Name    string
 	Address string
 }
 
 // Run 初始化服务
-func Run(o *Options) error {
+func Run() error {
+	var o options
+	if err := configs.GViper.UnmarshalKey("sql", &o); err != nil {
+		return err
+	}
 	db, err := orm.NewGormV2(o.Name, o.Address)
 	if err != nil {
 		return err

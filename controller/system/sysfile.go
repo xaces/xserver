@@ -1,12 +1,16 @@
 package system
 
 import (
+	"os"
+	"path"
+	"path/filepath"
+	"xserver/configs"
 	"xserver/middleware"
 	"xserver/model"
 	"xserver/service"
 
-	"github.com/wlgd/xutils/ctx"
-	"github.com/wlgd/xutils/orm"
+	"github.com/xaces/xutils/ctx"
+	"github.com/xaces/xutils/orm"
 
 	"github.com/gin-gonic/gin"
 )
@@ -23,13 +27,13 @@ func (o *File) ListHandler(c *gin.Context) {
 		return
 	}
 	var data []model.SysFile
-	total, _ := orm.DbByWhere(&model.SysFile{}, p.DbWhere()).Find(&data)
+	total, _ := p.DbWhere().Model(&model.SysFile{}).Find(&data)
 	ctx.JSONWrite(gin.H{"total": total, "data": data}, c)
 }
 
 // GetHandler 查询详细
 func (o *File) GetHandler(c *gin.Context) {
-	service.QueryById(&model.SysFile{}, c)
+	service.QueryByID(&model.SysFile{}, c)
 }
 
 // AddHandler 新增
@@ -73,8 +77,8 @@ func (o *File) UploadHandler(c *gin.Context) {
 		ctx.JSONWriteError(err, c)
 		return
 	}
-	filename := "" + fileHead.Filename
-	// TODO save db
+	filename := configs.Public("files", fileHead.Filename)
+	os.MkdirAll(filepath.Dir(filename), os.ModePerm)
 	if err := c.SaveUploadedFile(fileHead, filename); err != nil {
 		ctx.JSONWriteError(err, c)
 		return
@@ -86,7 +90,7 @@ func (o *File) UploadHandler(c *gin.Context) {
 			Path: filename,
 			Size: fileHead.Size,
 			Desc: fileHead.Filename,
-			Type: fileHead.Filename,
+			Type: path.Ext(fileHead.Filename),
 		},
 		CreatedBy: tok.UserName,
 	}
@@ -97,18 +101,11 @@ func (o *File) UploadHandler(c *gin.Context) {
 	ctx.JSONOk(c)
 }
 
-func (o *File) DownloadHandler(c *gin.Context) {
-	filename := c.Param("file")
-	c.File(filename)
-}
-
-func FileRouters(r *gin.RouterGroup) {
-	o := File{}
+func (o File) Routers(r *gin.RouterGroup) {
 	r.GET("/list", o.ListHandler)
 	r.GET("/:id", o.GetHandler)
 	r.POST("", o.AddHandler)
 	r.PUT("", o.UpdateHandler)
 	r.DELETE("/:id", o.DeleteHandler)
 	r.POST("/upload", o.UploadHandler)
-	r.GET("/download/:file", o.DownloadHandler)
 }

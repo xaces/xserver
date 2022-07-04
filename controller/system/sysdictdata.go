@@ -4,8 +4,8 @@ import (
 	"xserver/model"
 	"xserver/service"
 
-	"github.com/wlgd/xutils/ctx"
-	"github.com/wlgd/xutils/orm"
+	"github.com/xaces/xutils/ctx"
+	"github.com/xaces/xutils/orm"
 
 	"github.com/gin-gonic/gin"
 )
@@ -22,7 +22,7 @@ func (o *Dict) ListHandler(c *gin.Context) {
 		return
 	}
 	var data []model.SysDictData
-	total, _ := orm.DbByWhere(&model.SysDictData{}, p.Where()).Find(&data)
+	total, _ := p.Where().Model(&model.SysDictData{}).Find(&data)
 	ctx.JSONWrite(gin.H{"total": total, "data": data}, c)
 }
 
@@ -40,19 +40,15 @@ func (o *Dict) ListExcludeHandler(c *gin.Context) {
 
 // GetHandler 查询详细
 func (o *Dict) GetHandler(c *gin.Context) {
-	service.QueryById(&model.SysDictData{}, c)
+	service.QueryByID(&model.SysDictData{}, c)
 }
 
 // DictTypeHandler
 func (o *Dict) DictTypeHandler(c *gin.Context) {
 	dtype := c.Param("code")
 	var data []model.SysDictData
-	_, err := orm.DbFindBy(&data, "type_code = ?", dtype)
-	if err != nil {
-		ctx.JSONWriteError(err, c)
-		return
-	}
-	ctx.JSONWriteData(data, c)
+	total, _ := orm.DbFindBy(&data, "type_code = ?", dtype)
+	ctx.JSONWrite(gin.H{"total": total, "data": data}, c)
 }
 
 // RoleDeptTreeselectHandler 根据角色ID查询树结构
@@ -95,8 +91,7 @@ func (o *Dict) DeleteHandler(c *gin.Context) {
 	service.Deletes(&model.SysDictData{}, c)
 }
 
-func DictDataRouters(r *gin.RouterGroup) {
-	o := Dict{}
+func (o Dict) Routers(r *gin.RouterGroup) {
 	r.GET("/list", o.ListHandler)
 	r.GET("/:id", o.GetHandler)
 	r.GET("/type/:code", o.DictTypeHandler)

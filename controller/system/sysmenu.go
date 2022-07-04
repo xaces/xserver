@@ -4,10 +4,10 @@ import (
 	"xserver/model"
 	"xserver/service"
 
-	"github.com/wlgd/xutils/ctx"
+	"github.com/xaces/xutils/ctx"
 
 	"github.com/gin-gonic/gin"
-	"github.com/wlgd/xutils/orm"
+	"github.com/xaces/xutils/orm"
 )
 
 // Menu
@@ -22,13 +22,13 @@ func (o *Menu) ListHandler(c *gin.Context) {
 		return
 	}
 	var data []model.SysMenu
-	total, _ := orm.DbByWhere(&model.SysMenu{}, p.Where()).Find(&data)
+	total, _ := p.Where().Model(&model.SysMenu{}).Find(&data)
 	ctx.JSONWrite(gin.H{"total": total, "data": data}, c)
 }
 
 // GetHandler 查询详细
 func (o *Menu) GetHandler(c *gin.Context) {
-	service.QueryById(&model.SysMenu{}, c)
+	service.QueryByID(&model.SysMenu{}, c)
 }
 
 // AddHandler 新增
@@ -63,8 +63,7 @@ func (o *Menu) UpdateHandler(c *gin.Context) {
 func (o *Menu) DeleteHandler(c *gin.Context) {
 	service.Deletes(&model.SysMenu{}, c)
 }
-func MenuRouters(r *gin.RouterGroup) {
-	o := Menu{}
+func (o Menu) Routers(r *gin.RouterGroup) {
 	r.GET("/list", o.ListHandler)
 	r.GET("/:id", o.GetHandler)
 	r.POST("", o.AddHandler)

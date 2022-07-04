@@ -6,8 +6,8 @@ import (
 	"xserver/configs"
 	"xserver/model"
 
-	"github.com/wlgd/xutils"
-	"github.com/wlgd/xutils/orm"
+	"github.com/xaces/xutils"
+	"github.com/xaces/xutils/orm"
 )
 
 type jsonMenu struct {
@@ -18,7 +18,7 @@ func main() {
 	if err := configs.Load(".config.yaml"); err != nil {
 		log.Fatalln(err)
 	}
-	if err := db.Run(&configs.Default.Sql); err != nil {
+	if err := db.Run(); err != nil {
 		log.Fatalln(err)
 	}
 

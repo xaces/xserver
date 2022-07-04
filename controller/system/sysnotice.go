@@ -4,8 +4,8 @@ import (
 	"xserver/model"
 	"xserver/service"
 
-	"github.com/wlgd/xutils/ctx"
-	"github.com/wlgd/xutils/orm"
+	"github.com/xaces/xutils/ctx"
+	"github.com/xaces/xutils/orm"
 
 	"github.com/gin-gonic/gin"
 )
@@ -22,13 +22,13 @@ func (o *Notice) ListHandler(c *gin.Context) {
 		return
 	}
 	var data []model.SysNotice
-	total, _ := orm.DbByWhere(&model.SysNotice{}, p.DbWhere()).Find(&data)
+	total, _ := p.DbWhere().Model(&model.SysNotice{}).Find(&data)
 	ctx.JSONWrite(gin.H{"total": total, "data": data}, c)
 }
 
 // GetHandler 详细
 func (o *Notice) GetHandler(c *gin.Context) {
-	service.QueryById(&model.SysNotice{}, c)
+	service.QueryByID(&model.SysNotice{}, c)
 }
 
 // AddHandler 新增
@@ -66,8 +66,7 @@ func (o *Notice) DeleteHandler(c *gin.Context) {
 	service.Deletes(&model.SysNotice{}, c)
 }
 
-func NoticeRouters(r *gin.RouterGroup) {
-	o := Notice{}
+func (o Notice) Routers(r *gin.RouterGroup) {
 	r.GET("/list", o.ListHandler)
 	r.GET("/:id", o.GetHandler)
 	r.POST("", o.AddHandler)

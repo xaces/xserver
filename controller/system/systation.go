@@ -6,8 +6,8 @@ import (
 	"xserver/service"
 	"xserver/util"
 
-	"github.com/wlgd/xutils/ctx"
-	"github.com/wlgd/xutils/orm"
+	"github.com/xaces/xutils/ctx"
+	"github.com/xaces/xutils/orm"
 
 	"github.com/gin-gonic/gin"
 )
@@ -26,7 +26,7 @@ func (o *Station) ListHandler(c *gin.Context) {
 
 // GetHandler 详细
 func (o *Station) GetHandler(c *gin.Context) {
-	service.QueryById(&model.SysTation{}, c)
+	service.QueryByID(&model.SysTation{}, c)
 }
 
 // AddHandler 新增
@@ -65,8 +65,7 @@ func (o *Station) DeleteHandler(c *gin.Context) {
 	service.Deletes(&model.SysTation{}, c)
 }
 
-func StationRouters(r *gin.RouterGroup) {
-	o := Station{}
+func (o Station) Routers(r *gin.RouterGroup) {
 	r.GET("/list", o.ListHandler)
 	r.GET("/:id", o.GetHandler)
 	r.POST("", o.AddHandler)

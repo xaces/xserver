@@ -3,11 +3,11 @@ package service
 import (
 	"xserver/model"
 
-	"github.com/wlgd/xutils/orm"
+	"github.com/xaces/xutils/orm"
 )
 
-// SysRoleQueryById 查询指定权限byID
-func SysRoleQueryById(id uint64) (role model.SysRole, err error) {
+// SysRoleQueryByID 查询指定权限byID
+func SysRoleQueryByID(id uint64) (role model.SysRole, err error) {
 	err = orm.DB().Where("id = ?", id).Preload("SysMenus").First(&role).Error
 	return
 }

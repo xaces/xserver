@@ -5,10 +5,10 @@ import (
 	"xserver/model"
 	"xserver/service"
 
-	"github.com/wlgd/xutils/ctx"
+	"github.com/xaces/xutils/ctx"
 
 	"github.com/gin-gonic/gin"
-	"github.com/wlgd/xutils/orm"
+	"github.com/xaces/xutils/orm"
 )
 
 // Role
@@ -27,13 +27,13 @@ func (o *Role) PageHandler(c *gin.Context) {
 		p.createdBy = tok.UserName
 	}
 	var data []model.SysRole
-	total, _ := orm.DbByWhere(&model.SysRole{}, p.Role()).Find(&data)
+	total, _ := p.Role().Model(&model.SysRole{}).Find(&data)
 	ctx.JSONWrite(gin.H{"total": total, "data": data}, c)
 }
 
 // GetHandler 查询
 func (o *Role) GetHandler(c *gin.Context) {
-	service.QueryById(&model.SysRole{}, c)
+	service.QueryByID(&model.SysRole{}, c)
 }
 
 // GetRolePowerHandler 查询
@@ -114,8 +114,7 @@ func (o *Role) DeleteHandler(c *gin.Context) {
 	service.Deletes(&model.SysRole{}, c)
 }
 
-func RoleRouters(r *gin.RouterGroup) {
-	o := Role{}
+func (o Role) Routers(r *gin.RouterGroup) {
 	r.GET("/list", o.PageHandler)
 	r.GET("/:id", o.GetHandler)
 	r.POST("", o.AddHandler)

@@ -13,7 +13,7 @@ type program struct {
 }
 
 func (p *program) Start(s svc.Service) error {
-	if err := configs.Load(".config.yaml"); err != nil {
+	if err := configs.Load("config.yaml"); err != nil {
 		return err
 	}
 	return p.run()
@@ -29,7 +29,7 @@ func (p *program) Stop(s svc.Service) error {
 
 func main() {
 	svconf := &svc.Config{
-		Name:        "xvms.server",
+		Name:        "xserver",
 		DisplayName: "xserver",
 		Description: "This is server application",
 	}

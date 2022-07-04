@@ -8,8 +8,8 @@ import (
 	"xserver/model"
 	"xserver/service"
 
-	"github.com/wlgd/xutils/ctx"
-	"github.com/wlgd/xutils/orm"
+	"github.com/xaces/xutils/ctx"
+	"github.com/xaces/xutils/orm"
 
 	"github.com/gin-gonic/gin"
 	"github.com/mojocn/base64Captcha"

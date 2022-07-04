@@ -8,8 +8,8 @@ import (
 	"xserver/service"
 	"xserver/util"
 
-	"github.com/wlgd/xutils/ctx"
-	"github.com/wlgd/xutils/orm"
+	"github.com/xaces/xutils/ctx"
+	"github.com/xaces/xutils/orm"
 
 	"github.com/gin-gonic/gin"
 )
@@ -25,13 +25,13 @@ func (o *Vehicle) ListHandler(c *gin.Context) {
 	}
 	p.OrganizeGUID = middleware.GetUserToken(c).OrganizeGUID
 	var data []model.OprVehicle
-	total, _ := orm.DbByWhere(&data, p.Vehicle()).Find(&data)
+	total, _ := p.Vehicle().Model(&model.OprVehicle{}).Find(&data)
 	ctx.JSONWrite(gin.H{"total": total, "data": data}, c)
 }
 
 // GetHandler 获取指定id
 func (o *Vehicle) GetHandler(c *gin.Context) {
-	service.QueryById(&model.OprVehicle{}, c)
+	service.QueryByID(&model.OprVehicle{}, c)
 }
 
 // AddHandler 新增
@@ -126,13 +126,12 @@ func (o *Vehicle) DeleteHandler(c *gin.Context) {
 	service.Deletes(&model.OprVehicle{}, c)
 }
 
-func VehicleRouter(r *gin.RouterGroup) {
-	v := Vehicle{}
-	r.GET("/list", v.ListHandler)
-	r.GET("/:id", v.GetHandler)
-	r.POST("", v.AddHandler)
-	r.POST("/batchAdd", v.BatchAddHandler)
-	r.PUT("", v.UpdateHandler)
-	r.PUT("/resetOrganize", v.ResetOrganizeHandler)
-	r.DELETE("/:id", v.DeleteHandler)
+func (o Vehicle) Routers(r *gin.RouterGroup) {
+	r.GET("/list", o.ListHandler)
+	r.GET("/:id", o.GetHandler)
+	r.POST("", o.AddHandler)
+	r.POST("/batchAdd", o.BatchAddHandler)
+	r.PUT("", o.UpdateHandler)
+	r.PUT("/resetOrganize", o.ResetOrganizeHandler)
+	r.DELETE("/:id", o.DeleteHandler)
 }

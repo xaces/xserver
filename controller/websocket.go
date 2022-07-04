@@ -7,10 +7,10 @@ import (
 
 	"github.com/gin-gonic/gin"
 	jsoniter "github.com/json-iterator/go"
-	"github.com/wlgd/xutils/ctx"
+	"github.com/xaces/xutils/ctx"
 
 	"xserver/entity/cache"
-	"xserver/entity/nats"
+	"xserver/entity/subject"
 	"xserver/middleware"
 
 	"github.com/gorilla/websocket"
@@ -50,7 +50,7 @@ func WsHandler(c *gin.Context) {
 		return
 	}
 	defer ws.Close()
-	msgChan := nats.Default.Push(c.Request.RemoteAddr)
+	msgChan := subject.Default.NewClient(c.Request.RemoteAddr)
 	if msgChan == nil {
 		ctx.JSONWriteError(errors.New("subscribe server"), c)
 		return
@@ -69,5 +69,5 @@ func WsHandler(c *gin.Context) {
 			break
 		}
 	}
-	nats.Default.Pop(c.Request.RemoteAddr)
+	subject.Default.DelClient(c.Request.RemoteAddr)
 }

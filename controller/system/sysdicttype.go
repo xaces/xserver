@@ -4,8 +4,8 @@ import (
 	"xserver/model"
 	"xserver/service"
 
-	"github.com/wlgd/xutils/ctx"
-	"github.com/wlgd/xutils/orm"
+	"github.com/xaces/xutils/ctx"
+	"github.com/xaces/xutils/orm"
 
 	"github.com/gin-gonic/gin"
 )
@@ -22,13 +22,13 @@ func (o *DictType) ListHandler(c *gin.Context) {
 		return
 	}
 	var data []model.SysDictType
-	total, _ := orm.DbByWhere(&model.SysDictType{}, p.Where()).Find(&data)
+	total, _ := p.Where().Model(&model.SysDictType{}).Find(&data)
 	ctx.JSONWrite(gin.H{"total": total, "data": data}, c)
 }
 
 // GetHandler 详细
 func (o *DictType) GetHandler(c *gin.Context) {
-	service.QueryById(&model.SysDictType{}, c)
+	service.QueryByID(&model.SysDictType{}, c)
 }
 
 // AddHandler 新增
@@ -66,8 +66,7 @@ func (o *DictType) DeleteHandler(c *gin.Context) {
 	service.Deletes(&model.SysDictType{}, c)
 }
 
-func DictTypeRouters(r *gin.RouterGroup) {
-	o := DictType{}
+func (o DictType) Routers(r *gin.RouterGroup) {
 	r.GET("/list", o.ListHandler)
 	r.GET("/:id", o.GetHandler)
 	r.POST("", o.AddHandler)

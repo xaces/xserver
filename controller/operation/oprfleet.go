@@ -6,8 +6,8 @@ import (
 	"xserver/model"
 	"xserver/service"
 
-	"github.com/wlgd/xutils/ctx"
-	"github.com/wlgd/xutils/orm"
+	"github.com/xaces/xutils/ctx"
+	"github.com/xaces/xutils/orm"
 
 	"github.com/gin-gonic/gin"
 )
@@ -37,7 +37,7 @@ func (o *Fleet) LisTreeHandler(c *gin.Context) {
 
 // GetHandler 详细
 func (o *Fleet) GetHandler(c *gin.Context) {
-	service.QueryById(&model.OprOrganization{}, c)
+	service.QueryByID(&model.OprOrganization{}, c)
 }
 
 // AddHandler 新增
@@ -81,8 +81,7 @@ func (o *Fleet) DeleteHandler(c *gin.Context) {
 func (o *Fleet) DevicesHandler(c *gin.Context) {
 }
 
-func FleetRouters(r *gin.RouterGroup) {
-	o := Fleet{}
+func (o Fleet) Routers(r *gin.RouterGroup) {
 	r.GET("/list", o.ListHandler)
 	r.GET("/listree", o.LisTreeHandler)
 	r.GET("/:id", o.GetHandler)

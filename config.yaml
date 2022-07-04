@@ -1,10 +1,10 @@
 host: "127.0.0.1" ### 公网ip
+public: "public"
 http: ###
   port: 8080
   timeout: 20
   root: "xserver"
-  view: "Pear-Admin-Layui"
-  
+  view: "../Pear-Admin-Layui"
 sql:
   # name: "mysql"
   # address: "root:123456@tcp(127.0.0.1:3306)/xserver?charset=utf8&parseTime=True&loc=Local"

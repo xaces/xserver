@@ -7,8 +7,8 @@ import (
 	"xserver/model"
 	"xserver/service"
 
-	"github.com/wlgd/xutils/ctx"
-	"github.com/wlgd/xutils/orm"
+	"github.com/xaces/xutils/ctx"
+	"github.com/xaces/xutils/orm"
 
 	"github.com/gin-gonic/gin"
 )
@@ -33,20 +33,20 @@ func (o *User) PageHandler(c *gin.Context) {
 		p.createdBy = tok.UserName // 非管理员用户只能查看自己创建的用户
 	}
 	var data []model.SysUser
-	total, _ := orm.DbByWhere(&model.SysUser{}, p.User()).Find(&data)
+	total, _ := p.User().Model(&model.SysUser{}).Find(&data)
 	ctx.JSONWrite(gin.H{"data": data, "total": total}, c)
 }
 
 // GetHandler 查询详细
 func (o *User) GetHandler(c *gin.Context) {
-	service.QueryById(&model.SysUser{}, c)
+	service.QueryByID(&model.SysUser{}, c)
 }
 
 // GetRolesHandler
 func (o *User) GetRolesHandler(c *gin.Context) {
 	tok := middleware.GetUserToken(c)
 	var roles []model.SysRole
-	if _, err := orm.DbFindBy(&roles, "created_by like ?", tok.UserName); err != nil {
+	if _, err := orm.DbFindBy(&roles, "created_by = ?", tok.UserName); err != nil {
 		ctx.JSONWriteError(err, c)
 		return
 	}
@@ -294,8 +294,7 @@ func (o *User) DevicesHandler(c *gin.Context) {
 	ctx.JSONWriteData(data, c)
 }
 
-func UserRouters(r *gin.RouterGroup) {
-	o := User{}
+func (o User) Routers(r *gin.RouterGroup) {
 	r.GET("/list", o.PageHandler)
 	r.GET("/:id", o.GetHandler)
 	r.GET("/getRoles", o.GetRolesHandler)

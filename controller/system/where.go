@@ -1,6 +1,6 @@
 package system
 
-import "github.com/wlgd/xutils/orm"
+import "github.com/xaces/xutils/orm"
 
 // UserPage 查询页
 type Where struct {

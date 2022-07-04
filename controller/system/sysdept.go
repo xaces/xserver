@@ -5,8 +5,8 @@ import (
 	"xserver/model"
 	"xserver/service"
 
-	"github.com/wlgd/xutils/ctx"
-	"github.com/wlgd/xutils/orm"
+	"github.com/xaces/xutils/ctx"
+	"github.com/xaces/xutils/orm"
 
 	"github.com/gin-gonic/gin"
 )
@@ -23,7 +23,7 @@ func (o *Dept) PageHandler(c *gin.Context) {
 		return
 	}
 	var data []model.SysDept
-	total, _ := orm.DbByWhere(&model.SysDept{}, p.Where()).Find(&data)
+	total, _ := p.Where().Model(&model.SysDept{}).Find(&data)
 	ctx.JSONWrite(gin.H{"total": total, "data": data}, c)
 }
 
@@ -41,7 +41,7 @@ func (o *Dept) ListExcludeHandler(c *gin.Context) {
 
 // GetHandler 查询详细
 func (o *Dept) GetHandler(c *gin.Context) {
-	service.QueryById(&model.SysDept{}, c)
+	service.QueryByID(&model.SysDept{}, c)
 }
 
 // TreeselectHandler 查询下拉树结构
@@ -104,8 +104,7 @@ func (o *Dept) DeleteHandler(c *gin.Context) {
 	service.Deletes(&model.SysDept{}, c)
 }
 
-func DeptRouters(r *gin.RouterGroup) {
-	o := Dept{}
+func (o Dept) Routers(r *gin.RouterGroup) {
 	r.GET("/list", o.PageHandler)
 	// r.GET("/list/exclude/:id", o.ListExcludeHandler)
 	r.GET("/:id", o.GetHandler)

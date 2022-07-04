@@ -2,15 +2,16 @@ package system
 
 import "github.com/gin-gonic/gin"
 
-func InitRouters(r *gin.RouterGroup) {
-	MenuRouters(r.Group("/menu"))
-	RoleRouters(r.Group("/role"))
-	UserRouters(r.Group("/user"))
-	DeptRouters(r.Group("/dept"))
+func Routers(r *gin.RouterGroup) {
+	Menu{}.Routers(r.Group("/menu"))
+	Role{}.Routers(r.Group("/role"))
+	User{}.Routers(r.Group("/user"))
+	// DeptRouters(r.Group("/dept"))
+	Dept{}.Routers(r.Group("/dept"))
 	// PostRouters(sys)
-	DictDataRouters(r.Group("/dict/data"))
-	DictTypeRouters(r.Group("/dict/type"))
-	FileRouters(r.Group("/file"))
-	NoticeRouters(r.Group("/notice"))
-	StationRouters(r.Group("/station"))
+	Dict{}.Routers(r.Group("/dict/data"))
+	DictType{}.Routers(r.Group("/dict/type"))
+	File{}.Routers(r.Group("/file"))
+	Notice{}.Routers(r.Group("/notice"))
+	Station{}.Routers(r.Group("/station"))
 }

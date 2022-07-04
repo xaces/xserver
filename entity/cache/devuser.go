@@ -3,7 +3,7 @@ package cache
 import (
 	"xserver/util"
 
-	"github.com/wlgd/xutils"
+	"github.com/xaces/xutils"
 )
 
 type devUser struct {

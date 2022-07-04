@@ -4,8 +4,8 @@ import (
 	"xserver/util"
 
 	"github.com/gin-gonic/gin"
-	"github.com/wlgd/xutils/ctx"
-	"github.com/wlgd/xutils/orm"
+	"github.com/xaces/xutils/ctx"
+	"github.com/xaces/xutils/orm"
 )
 
 func Deletes(v interface{}, c *gin.Context) {
@@ -20,7 +20,7 @@ func Deletes(v interface{}, c *gin.Context) {
 	ctx.JSONOk(c)
 }
 
-func QueryById(v interface{}, c *gin.Context) {
+func QueryByID(v interface{}, c *gin.Context) {
 	queryId := ctx.ParamUInt(c, "id")
 	if err := orm.DbFirstById(v, queryId); err != nil {
 		ctx.JSONWriteError(err, c)

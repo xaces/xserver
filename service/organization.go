@@ -3,7 +3,7 @@ package service
 import (
 	"xserver/model"
 
-	"github.com/wlgd/xutils/orm"
+	"github.com/xaces/xutils/orm"
 )
 
 // 主组织

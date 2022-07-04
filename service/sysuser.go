@@ -6,7 +6,7 @@ import (
 	"xserver/pkg/gmd5"
 	"xserver/util"
 
-	"github.com/wlgd/xutils/orm"
+	"github.com/xaces/xutils/orm"
 )
 
 const (

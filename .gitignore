@@ -27,3 +27,4 @@ _testmain.go
 __debug_bin
 go.sum
 *.db
+public/*
